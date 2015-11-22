@@ -1,0 +1,25 @@
+{
+  "name": "nepq",
+  "version": "0.0.1",
+  "description": "An easy query pattern for database API",
+  "main": "./lib/nepq.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/acoshift/nepq.git"
+  },
+  "keywords": [
+    "database",
+    "api",
+    "query",
+    "json"
+  ],
+  "author": "Thanatat Tamtan <acoshift@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/acoshift/nepq/issues"
+  },
+  "homepage": "https://github.com/acoshift/nepq#readme"
+}
