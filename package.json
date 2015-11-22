@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/acoshift/nepq/issues"
   },
-  "homepage": "https://github.com/acoshift/nepq#readme"
+  "homepage": "https://github.com/acoshift/nepq#readme",
+  "devDependencies": {
+    "jison": "^0.4.15"
+  }
 }
