@@ -1,6 +1,6 @@
 # Nep Query (nepq; NepQ)
 
-Nep Query is an easy query pattern use in nepdb.
+Nep Query is an easy query pattern use for database API.
 
 ## Syntax
 
