@@ -127,13 +127,42 @@ will convert to
 ##### Delete
 
 ```
-// TODO
+delete db.user(id: 1234) { }
 ```
 
 will convert to
 
 ```json
-// TODO
+{
+  "method": "delete",
+  "database": "db",
+  "collection": "user",
+  "param": {
+    "id": 1234
+  },
+  "retrieve": {
+  }
+}
+```
+
+or
+
+```
+delete db.user(id: 1234)
+```
+
+will convert to
+
+```json
+{
+  "method": "delete",
+  "database": "db",
+  "collection": "user",
+  "param": {
+    "id": 1234
+  },
+  "retrieve": null
+}
 ```
 
 ### Response:
