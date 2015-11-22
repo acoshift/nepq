@@ -25,6 +25,7 @@ The syntax of nepq is influenced by Facebook's GraphQL but not complex.
 **retrieve**: retrieve fields.
 
 Request will convert to json for process.
+
 ```ts
 interface Request {
   method: string;
@@ -36,6 +37,7 @@ interface Request {
 ```
 
 Example:
+
 ```
 read db.user(email: "me@email.com") {
   id,
@@ -72,7 +74,7 @@ will convert to
 
 ### Response:
 
-Response is json with pattern
+Response is json with pattern.
 
 ```ts
 interface Response {
@@ -81,7 +83,9 @@ interface Response {
   result: any;
 }
 ```
+
 Example:
+
 ```json
 {
   "ok": 1,
