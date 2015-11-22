@@ -9,7 +9,7 @@ The syntax of nepq is influenced by Facebook's GraphQL but not complex.
 ### Request:
 
 ```
-{method} {database}.{collection}({params}) {
+{method} {database}.{collection}({param}) {
   {retrieve}
 }
 ```
@@ -20,7 +20,7 @@ The syntax of nepq is influenced by Facebook's GraphQL but not complex.
 
 **collection**: collection in database to use.
 
-**params**: parameters.
+**param**: parameters.
 
 **retrieve**: retrieve fields.
 
@@ -31,12 +31,52 @@ interface Request {
   method: string;
   database: string;
   collection: string;
-  params: any;
+  param: any;
   retrieve: any;
 }
 ```
 
-Example:
+#### Example:
+
+##### Create
+
+```
+create db.user({
+  "username": "me",
+  "email": "me@email.com",
+  "tel": "+661234567",
+  "address": {
+    "province": "Bangkok",
+    "zip": "12345",
+    "country": "TH"
+  }
+}) { id }
+```
+
+will convert to
+
+```json
+{
+  "method": "create",
+  "database": "db",
+  "collection": "user",
+  "param": {
+    "username": "me",
+    "email": "me@email.com",
+    "tel": "+661234567",
+    "address": {
+      "province": "Bangkok",
+      "zip": "12345",
+      "country": "TH"
+    }
+  },
+  "retrieve": {
+    "id": 1
+  }
+}
+```
+
+##### Read
 
 ```
 read db.user(email: "me@email.com") {
@@ -57,7 +97,7 @@ will convert to
   "method": "read",
   "database": "db",
   "collection": "user",
-  "params": {
+  "param": {
     "email": "me@email.com"
   },
   "retrieve": {
@@ -70,6 +110,30 @@ will convert to
     }
   }
 }
+```
+
+##### Update
+
+```
+// TODO
+```
+
+will convert to
+
+```json
+// TODO
+```
+
+##### Delete
+
+```
+// TODO
+```
+
+will convert to
+
+```json
+// TODO
 ```
 
 ### Response:
