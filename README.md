@@ -50,7 +50,9 @@ create db.user({
     "zip": "12345",
     "country": "TH"
   }
-}) { id }
+}) {
+  id
+}
 ```
 
 will convert to
