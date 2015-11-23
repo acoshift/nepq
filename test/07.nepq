@@ -1,0 +1,5 @@
+delete user(user: "user1") {
+	id,
+	name,
+	user
+}

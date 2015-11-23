@@ -1,0 +1,9 @@
+{
+	"method": "delete",
+	"database": null,
+	"collection": "user",
+	"param": {
+		"user": "user1"
+	},
+	"retrieve": {}
+}

@@ -1,0 +1,8 @@
+read user(user: "user1") {
+	id,
+	name: {
+		first,
+		last
+	},
+	user
+}

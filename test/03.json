@@ -1,0 +1,13 @@
+{
+	"method": "read",
+	"database": null,
+	"collection": "user",
+	"param": {
+		"user": "user1"
+	},
+	"retrieve": {
+		"id": 1,
+		"name": 1,
+		"user": 1
+	}
+}

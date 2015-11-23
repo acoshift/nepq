@@ -1,0 +1,12 @@
+{
+	"method": "create",
+	"database": null,
+	"collection": "user",
+	"param": {
+		"username": "user1",
+		"password": "1234"
+	},
+	"retrieve": {
+		"id": 1
+	}
+}
