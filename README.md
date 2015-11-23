@@ -8,7 +8,7 @@ Nep Query is an easy query pattern use for database API.
 ```js
 var nepq = require("nepq").parser;
 
-var n = 'create myweb.user(username: "user1", password: "1234")'
+var n = 'create myweb.user(username: "user1", password: "1234")';
 var j = nepq.parse(n);
 console.log(j);
 ```
