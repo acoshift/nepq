@@ -2,6 +2,7 @@
   "name": "nepq",
   "version": "0.0.1",
   "description": "An easy query pattern for database API",
+  "main": "nepq.js",
   "scripts": {
     "test": "node test.js",
     "postinstall": "npm run build",
