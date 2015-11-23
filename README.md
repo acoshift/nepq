@@ -2,6 +2,17 @@
 
 Nep Query is an easy query pattern use for database API.
 
+## Usage
+`$ npm install nepq`
+
+```js
+var nepq = require("nepq").parser;
+
+var n = 'create myweb.user(username: "user1", password: "1234")'
+var j = nepq.parse(n);
+console.log(j);
+```
+
 ## Syntax
 
 The syntax of nepq is influenced by Facebook's GraphQL but not complex.
