@@ -48,7 +48,6 @@ nepq
         param: $3,
         retrieve: $4
       }
-      console.log($$);
       return $$;
     }
   ;
