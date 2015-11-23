@@ -76,10 +76,14 @@ rets
   ;
 
 ret
+  : retv
+  | retv ',' ret
+    { $$ = Object.assign($1, $3); }
+  ;
+
+retv
   : id
     { $$ = {}; $$[$1] = 1; }
-  | id ',' ret
-    { $$ = {}; $$[$1] = 1; Object.assign($$, $3); }
   | id ':' rets
     { $$ = {}; $$[$1] = $3; }
   ;
@@ -133,7 +137,7 @@ elements
   : value
     { $$ = [ $1 ]; }
   | value ',' elements
-    { $$ = $3; $$.push($1); }
+    { $$ = $3; $$.unshift($1); }
   ;
 
 value
