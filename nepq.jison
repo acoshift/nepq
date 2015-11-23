@@ -39,7 +39,7 @@ delete                                  return 'delete';
 %%
 
 nepq
-  : crud name object rets eof
+  : crud name parameters rets eof
     {
       $$ = {
         method: $1,
@@ -85,14 +85,19 @@ ret
     { $$ = {}; $$[$1] = $3; }
   ;
 
+parameters
+  : '(' ')'
+    { $$ = {}; }
+  | '(' params ')'
+    { $$ = $2; }
+  | '(' object ')'
+    { $$ = $2; }
+  ;
+
 object
   : '{' '}'
     { $$ = {}; }
   | '{' members '}'
-    { $$ = $2; }
-  | '(' ')'
-    { $$ = {}; }
-  | '(' params ')'
     { $$ = $2; }
   ;
 
@@ -145,20 +150,7 @@ value
   | null
     { $$ = null; }
   ;
-/*
-string
-  : '"' '"'
-    { $$ = ''; }
-  | '"' chars '"'
-    { $$ = $2; }
-  ;
 
-chars
-  : char
-  | char chars
-    { $$ = $1 + $2; }
-  ;
-*/
 number
   : int
   | int frac
