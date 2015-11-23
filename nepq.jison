@@ -1,33 +1,37 @@
 %lex
 
+%x string
+
 %%
+<<EOF>>                                 return 'eof';
 \s+                                     ;
-[0-9]+("."[0-9]+)?\b                    return 'NUMBER';
-
-["]                                     this.begin('STRING');
-
+\.                                      return '.';
+\-                                      return '-';
+\,                                      return ',';
+\:                                      return ':';
+\(                                      return '(';
+\)                                      return ')';
+\{                                      return '{';
+\}                                      return '}';
+\[                                      return '[';
+\]                                      return ']';
+([eE][+-]?)                             return 'e';
 true                                    return 'true';
 false                                   return 'false';
-
 null                                    return 'null';
-
 create                                  return 'create';
 read                                    return 'read';
 update                                  return 'update';
 delete                                  return 'delete';
-
-"("                                     return '(';
-")"                                     return ')';
-"{"                                     return '{';
-"}"                                     return '}';
-":"                                     return ':';
-","                                     return ',';
-"."                                     return '.';
-
-([a-z]|[A-Z]|_)+([a-z]|[A-Z]|[0-9]|_)*  return 'id';
-
-<<EOF>>                                 return 'EOF';
-
+[1-9]                                   return 'digit1_9';
+[0-9]                                   return 'digit';
+\"                                      this.begin('string');
+<string>\"                              this.popState();
+<string>
+([^\"\\]|
+(\\[\"\\\/bfnrt])|
+(\\u[0-9a-fA-F]{4}))*                   return 'string';
+[a-zA-Z_][a-zA-Z0-9_]*                  return 'id';
 /lex
 
 %start nepq
@@ -35,13 +39,14 @@ delete                                  return 'delete';
 %%
 
 nepq
-  : crud name params EOF
+  : crud name object rets eof
     {
       $$ = {
         method: $1,
         database: $2.database,
         collection: $2.collection,
-        param: $3
+        param: $3,
+        retrieve: $4
       }
       console.log($$);
       return $$;
@@ -62,38 +67,134 @@ name
     { $$ = { database: $1, collection: $3 }; }
   ;
 
-bool
-  : true
-    { $$ = Boolean(yytext); }
-  | false
-    { $$ = Boolean(yytext); }
+rets
+  :
+    { $$ = null; }
+  | '{' '}'
+    { $$ = {}; }
+  | '{' ret '}'
+    { $$ = $2; }
   ;
 
-st
-  : STRING
-  | NUMBER
-    { $$ = Number(yytext); }
-  | bool
+ret
+  : id
+    { $$ = {}; $$[$1] = 1; }
+  | id ',' ret
+    { $$ = {}; $$[$1] = 1; Object.assign($$, $3); }
+  | id ':' rets
+    { $$ = {}; $$[$1] = $3; }
   ;
 
-param
-  : id ':' st
-    { $$ = { }; $$[$1] = $3; }
-  | param ',' id ':' st
-    { $$ = $1; $$[$3] = $5; }
+object
+  : '{' '}'
+    { $$ = {}; }
+  | '{' members '}'
+    { $$ = $2; }
+  | '(' ')'
+    { $$ = {}; }
+  | '(' params ')'
+    { $$ = $2; }
   ;
 
 params
-  :
-    { $$ = null; }
-  | '(' ')'
-    { $$ = { }; }
-  | '(' json ')'
-    { $$ = $2; }
-  | '(' param ')'
+  : param
+  | param ',' params
+    { $$ = Object.assign($1, $3); }
+  ;
+
+param
+  : id ':' value
+    { $$ = {}; $$[$1] = $3; }
+  ;
+
+members
+  : pair
+  | pair ',' members
+    { $$ = Object.assign($1, $3); }
+  ;
+
+pair
+  : string ':' value
+    { $$ = {}; $$[$1] = $3; }
+  ;
+
+array
+  : '[' ']'
+    { $$ = []; }
+  | '[' elements ']'
     { $$ = $2; }
   ;
 
-json
-  : '{' '}'
+elements
+  : value
+    { $$ = [ $1 ]; }
+  | value ',' elements
+    { $$ = $3; $$.push($1); }
+  ;
+
+value
+  : string
+  | number
+    { $$ = Number($1); }
+  | object
+  | array
+  | true
+    { $$ = true; }
+  | false
+    { $$ = false; }
+  | null
+    { $$ = null; }
+  ;
+/*
+string
+  : '"' '"'
+    { $$ = ''; }
+  | '"' chars '"'
+    { $$ = $2; }
+  ;
+
+chars
+  : char
+  | char chars
+    { $$ = $1 + $2; }
+  ;
+*/
+number
+  : int
+  | int frac
+    { $$ = $1 + $2; }
+  | int exp
+    { $$ = $1 + $2; }
+  | int frac exp
+    { $$ = $1 + $2 + $3; }
+  ;
+
+int
+  : digit
+  | digit1_9
+  | digit1_9 digits
+    { $$ = $1 + $2; }
+  | '-' digit
+    { $$ = $1 + $2; }
+  | '-' digit1_9
+    { $$ = $1 + $2; }
+  | '-' digit1_9 digits
+    { $$ = $1 + $2 + $3; }
+  ;
+
+frac
+  : '.' digits
+    { $$ = $1 + $2; }
+  ;
+
+exp
+  : e digits
+    { $$ = $1 + $2; }
+  ;
+
+digits
+  : digit
+  | digit1_9
+  | digit1_9 digits
+    { $$ = $1 + $2; }
   ;
