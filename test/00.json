@@ -1,6 +1,6 @@
 {
 	"method": "create",
-	"database": null,
+	"namespace": null,
 	"collection": "user",
 	"param": {
 		"username": "user1",

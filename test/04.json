@@ -1,6 +1,6 @@
 {
 	"method": "read",
-	"database": null,
+	"namespace": null,
 	"collection": "user",
 	"param": {
 		"user": "user1"
