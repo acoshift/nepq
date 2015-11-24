@@ -43,7 +43,7 @@ nepq
     {
       $$ = {
         method: $1,
-        database: $2.database,
+        namespace: $2.namespace,
         collection: $2.collection,
         param: $3,
         retrieve: $4
@@ -61,9 +61,9 @@ crud
 
 name
   : id
-    { $$ = { database: null, collection: $1 }; }
+    { $$ = { namespace: null, collection: $1 }; }
   | id '.' id
-    { $$ = { database: $1, collection: $3 }; }
+    { $$ = { namespace: $1, collection: $3 }; }
   ;
 
 rets

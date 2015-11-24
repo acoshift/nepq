@@ -1,6 +1,6 @@
 # Nep Query (nepq; NepQ)
 
-Nep Query is an easy query pattern use for database API.
+Nep Query is an easy query pattern.
 
 ## Usage
 `$ npm install nepq`
@@ -20,16 +20,16 @@ The syntax of nepq is influenced by Facebook's GraphQL but not complex.
 ### Request:
 
 ```
-{method} {database}.{collection}({param}) {
+{method} {namespace}.{collection}({param}) {
   {retrieve}
 }
 ```
 
 **method**: one of CRUD (create, read, update, delete).
 
-**database**: database to use.
+**namespace**: namespace to use.
 
-**collection**: collection in database to use.
+**collection**: collection in namespace to use.
 
 **param**: parameters.
 
@@ -40,7 +40,7 @@ Request will convert to json for process.
 ```ts
 interface Request {
   method: string;
-  database: string;
+  namespace: string;
   collection: string;
   param: any;
   retrieve: any;
@@ -71,7 +71,7 @@ will convert to
 ```json
 {
   "method": "create",
-  "database": "db",
+  "namespace": "db",
   "collection": "user",
   "param": {
     "username": "me",
@@ -108,7 +108,7 @@ will convert to
 ```json
 {
   "method": "read",
-  "database": "db",
+  "namespace": "db",
   "collection": "user",
   "param": {
     "email": "me@email.com"
@@ -148,7 +148,7 @@ will convert to
 ```json
 {
   "method": "delete",
-  "database": "db",
+  "namespace": "db",
   "collection": "user",
   "param": {
     "id": 1234
@@ -169,7 +169,7 @@ will convert to
 ```json
 {
   "method": "delete",
-  "database": "db",
+  "namespace": "db",
   "collection": "user",
   "param": {
     "id": 1234
