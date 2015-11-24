@@ -1,6 +1,6 @@
 {
   "name": "nepq",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "An easy query pattern for database API",
   "main": "nepq.js",
   "scripts": {
