@@ -1,5 +1,8 @@
 # Nep Query (nepq; NepQ)
 
+[![Build Status](https://travis-ci.org/acoshift/nepq.svg?branch=master)](https://travis-ci.org/acoshift/nepq)
+[![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg)]()
+
 Nep Query is an easy query pattern.
 
 ## Usage
