@@ -1,0 +1,1 @@
+read myweb.db.user(user: "test\"text\n\u00a0\\") { }

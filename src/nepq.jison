@@ -25,12 +25,18 @@ update                                  return 'update';
 delete                                  return 'delete';
 [1-9]                                   return 'digit1_9';
 [0-9]                                   return 'digit';
-\"                                      this.begin('string');
-<string>\"                              this.popState();
-<string>
-([^\"\\]|
-(\\[\"\\\/bfnrt])|
-(\\u[0-9a-fA-F]{4}))*                   return 'string';
+\"                                      { this.begin('string'); yystr = ''; }
+<string>\\u[0-9a-fA-F]{4}               { yystr += String.fromCharCode(parseInt('0x' + yytext.substr(-4))); }
+<string>\\\"                            yystr += '\"';
+<string>\\\\                            yystr += '\\';
+<string>\\b                             yystr += '\b';
+<string>\\f                             yystr += '\f';
+<string>\\n                             yystr += '\n';
+<string>\\r                             yystr += '\r';
+<string>\\t                             yystr += '\t';
+<string>\\\/                            yystr += '\/';
+<string>[^\"\\]+                        yystr += yytext;
+<string>\"                              { this.popState(); yytext = yystr; return 'string'; }
 [a-zA-Z_][a-zA-Z0-9_]*                  return 'id';
 /lex
 
