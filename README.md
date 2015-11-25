@@ -9,7 +9,7 @@ Nep Query is an easy query pattern.
 `$ npm install nepq`
 
 ```js
-var nepq = require("nepq").parser;
+var nepq = require("nepq");
 
 var n = 'create myweb.user(username: "user1", password: "1234")';
 var j = nepq.parse(n);
