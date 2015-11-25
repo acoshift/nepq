@@ -1,8 +1,8 @@
 {
   "name": "nepq",
   "version": "0.1.0",
-  "description": "An easy query pattern for database API",
-  "main": "nepq.js",
+  "description": "An easy query pattern",
+  "main": "index.js",
   "scripts": {
     "test": "gulp test"
   },
