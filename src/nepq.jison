@@ -44,7 +44,7 @@ nepq
       $$ = {
         method: $1,
         namespace: $2.namespace,
-        collection: $2.collection,
+        name: $2.name,
         param: $3,
         retrieve: $4
       }
@@ -61,9 +61,16 @@ crud
 
 name
   : id
-    { $$ = { namespace: null, collection: $1 }; }
-  | id '.' id
-    { $$ = { namespace: $1, collection: $3 }; }
+    { $$ = { namespace: null, name: $1 }; }
+  | namespace id
+    { $$ = { namespace: $1, name: $2 }; }
+  ;
+
+namespace
+  : id '.'
+    { $$ = [ $1 ]; }
+  | namespace id '.'
+    { $$ = $1; $$.push($2); }
   ;
 
 rets

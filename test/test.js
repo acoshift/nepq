@@ -5,21 +5,13 @@ var nepq = require('../build/'),
     path = require('path'),
     assert = require('assert');
 
-var tests = [
-  '00',
-  '01',
-  '02',
-  '03',
-  '04',
-  '05',
-  '06',
-  '07',
-  '08',
-  '09'
-];
+process.chdir(path.join(__dirname, 'data'));
 
-for (var i in tests) {
-  var n = nepq.parse(fs.readFileSync(path.join(__dirname, tests[i] + '.nepq')).toString());
-  var j = JSON.parse(fs.readFileSync(path.join(__dirname, tests[i] + '.json')).toString());
-  assert.deepEqual(n, j);
-}
+fs.readdirSync('.')
+  .filter(function(x) { return x.substr(-5) === '.nepq'; })
+  .map(function(x) { return x.substr(0, x.length - 5); })
+  .forEach(function(x) {
+    var n = nepq.parse(fs.readFileSync(x + '.nepq').toString());
+    var j = JSON.parse(fs.readFileSync(x + '.json').toString());
+    assert.deepEqual(n, j);
+  });

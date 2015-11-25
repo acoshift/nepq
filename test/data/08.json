@@ -1,7 +1,7 @@
 {
 	"method": "delete",
 	"namespace": null,
-	"collection": "user",
+	"name": "user",
 	"param": {
 		"user": "user1"
 	},

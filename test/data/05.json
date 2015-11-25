@@ -1,13 +1,16 @@
 {
-	"method": "delete",
+	"method": "read",
 	"namespace": null,
-	"collection": "user",
+	"name": "user",
 	"param": {
 		"user": "user1"
 	},
 	"retrieve": {
 		"id": 1,
-		"name": 1,
+		"name": {
+			"first": 1,
+			"last": 1
+		},
 		"user": 1
 	}
 }

@@ -11,7 +11,7 @@ Nep Query is an easy query pattern.
 ```js
 var nepq = require("nepq");
 
-var n = 'create myweb.user(username: "user1", password: "1234")';
+var n = 'create myweb.db.user(username: "user1", password: "1234")';
 var j = nepq.parse(n);
 console.log(j);
 ```
@@ -23,28 +23,28 @@ The syntax of nepq is influenced by Facebook's GraphQL but not complex.
 ### Request:
 
 ```
-{method} {namespace}.{collection}({param}) {
+{method} {namespace}.{name}({param}) {
   {retrieve}
 }
 ```
 
 **method**: one of CRUD (create, read, update, delete).
 
-**namespace**: namespace to use.
+**namespace**: namespace, can be nested or empty.
 
-**collection**: collection in namespace to use.
+**name**: name of anything.
 
-**param**: parameters.
+**param**: parameters, can be json.
 
-**retrieve**: retrieve fields.
+**retrieve**: fields that server will include in response, can be null or empty.
 
-Request will convert to json for process.
+Request will be converted into json.
 
 ```ts
 interface Request {
   method: string;
-  namespace: string;
-  collection: string;
+  namespace: string[];
+  name: string;
   param: any;
   retrieve: any;
 }
@@ -74,8 +74,8 @@ will convert to
 ```json
 {
   "method": "create",
-  "namespace": "db",
-  "collection": "user",
+  "namespace": [ "db" ],
+  "name": "user",
   "param": {
     "username": "me",
     "email": "me@email.com",
@@ -111,8 +111,8 @@ will convert to
 ```json
 {
   "method": "read",
-  "namespace": "db",
-  "collection": "user",
+  "namespace": [ "db" ],
+  "name": "user",
   "param": {
     "email": "me@email.com"
   },
@@ -151,8 +151,8 @@ will convert to
 ```json
 {
   "method": "delete",
-  "namespace": "db",
-  "collection": "user",
+  "namespace": [ "db" ],
+  "name": "user",
   "param": {
     "id": 1234
   },
@@ -172,8 +172,8 @@ will convert to
 ```json
 {
   "method": "delete",
-  "namespace": "db",
-  "collection": "user",
+  "namespace": [ "db" ],
+  "name": "user",
   "param": {
     "id": 1234
   },

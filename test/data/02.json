@@ -1,7 +1,7 @@
 {
 	"method": "create",
 	"namespace": null,
-	"collection": "user",
+	"name": "user",
 	"param": {
 		"username": "user1",
 		"password": "1234"
