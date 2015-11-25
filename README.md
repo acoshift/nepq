@@ -1,9 +1,8 @@
 # Nep Query (nepq; NepQ)
 
 [![Build Status](https://travis-ci.org/acoshift/nepq.svg?branch=master)](https://travis-ci.org/acoshift/nepq)
-[![npm download](https://img.shields.io/github/tag/acoshift/nepq.svg)]()
+[![github tag](https://img.shields.io/github/tag/acoshift/nepq.svg)]()
 [![npm version](https://img.shields.io/npm/v/nepq.svg)](https://www.npmjs.com/package/nepq)
-[![npm download](https://img.shields.io/npm/dt/nepq.svg)]()
 [![npm license](https://img.shields.io/npm/l/nepq.svg)]()
 
 Nep Query is an easy query pattern.
