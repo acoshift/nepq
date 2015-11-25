@@ -4,9 +4,7 @@
   "description": "An easy query pattern for database API",
   "main": "nepq.js",
   "scripts": {
-    "test": "node test.js",
-    "postinstall": "npm run build",
-    "build": "node_modules/.bin/jison nepq.jison"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
@@ -25,6 +23,11 @@
   },
   "homepage": "https://github.com/acoshift/nepq#readme",
   "devDependencies": {
-    "jison": "^0.4.15"
+    "del": "^2.1.0",
+    "gulp": "^3.9.0",
+    "gulp-jison": "^1.2.0",
+    "gulp-mocha": "^2.2.0",
+    "jison": "^0.4.15",
+    "mocha": "^2.3.4"
   }
 }
