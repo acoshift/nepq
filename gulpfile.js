@@ -6,7 +6,8 @@ var gulp = require('gulp'),
 var paths = {
   src: './src/',
   build: './build/',
-  test: './test/'
+  test: './test/',
+  dist: './dist/'
 };
 
 gulp.task('clean', function() {
@@ -27,6 +28,15 @@ gulp.task('js', function() {
 gulp.task('test', ['build'], function() {
   return gulp.src('test.js', { cwd: paths.test, read: false })
     .pipe(mocha());
+});
+
+gulp.task('clean-dist', function() {
+  return del.sync([paths.dist]);
+});
+
+gulp.task('dist', ['build'], function() {
+  return gulp.src([paths.build + '**/*', 'package.json', 'README.md'])
+    .pipe(gulp.dest(paths.dist));
 });
 
 gulp.task('build', ['clean', 'jison', 'js']);
