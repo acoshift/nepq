@@ -21,7 +21,7 @@ gulp.task('jison', function() {
 });
 
 gulp.task('js', function() {
-  return gulp.src(paths.src + '*.js')
+  return gulp.src(paths.src + '**/*.js')
     .pipe(gulp.dest(paths.build));
 });
 
