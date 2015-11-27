@@ -14,7 +14,7 @@ gulp.task('clean', function() {
 });
 
 gulp.task('jison', function() {
-  return gulp.src(paths.src + '*.jison')
+  return gulp.src(paths.src + 'lib/*.jison')
     .pipe(jison({ moduleType: 'commonjs' }))
     .pipe(gulp.dest(paths.build + 'lib/'));
 });
