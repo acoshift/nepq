@@ -1,6 +1,4 @@
-'use strict';
-
-var nepq = require('../build/'),
+var nepq = require('../build/lib/parser').parser,
     fs = require('fs'),
     path = require('path'),
     assert = require('assert');

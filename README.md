@@ -10,13 +10,78 @@ Nep Query is an easy query pattern.
 ## Usage
 `$ npm install nepq`
 
-```js
-var nepq = require("nepq");
-
-var n = 'create myweb.db.user(username: "user1", password: "1234")';
-var j = nepq.parse(n);
-console.log(j);
+#### Example
 ```
+$ npm init
+$ npm install express --save
+$ npm install nepq --save
+$ npm install -g typescript tsd
+$ tsc --init
+$ tsd init
+$ tsd install express --save
+```
+index.ts
+```ts
+/// <reference path="./typings/tsd.d.ts"/>
+/// <reference path="./node_modules/nepq/nepq.d.ts"/>
+
+import * as nepq from 'nepq';
+import * as express from 'express';
+
+var app = express(),
+    nepParser = nepq(),
+    users = [],
+    _id = 0;
+
+nepParser.on('create', null, 'user', (param) => {
+  if (!param.name || !param.pwd) return nepParser.response(null, 'invalid name or password!');
+  let user = {
+    id: _id++,
+    name: param.name,
+    pwd: param.pwd
+  };
+  users.push(user);
+  return nepParser.response(user, null);
+});
+
+nepParser.on('read', null, 'user', (param) => {
+  let user = users.filter((x) => {
+    return (!param.id || param.id === x.id) && (!param.name || param.name === x.name) && (!param.pwd || x.pwd);
+  });
+  return nepParser.response(user ? user[0] : null, null);
+});
+
+app.use(nepParser.bodyParser());
+
+app.use((req, res) => {
+  res.json(nepParser.response(null, 'no api'));
+});
+
+app.listen(8000);
+```
+```
+$ tsc -p .
+$ node build/index.js
+```
+
+```
+$ curl localhost:8000
+> {"ok":0,"error":"no api","result":null}
+
+$ curl --header "content-type: application/nepq" --data "create user() {}" localhost:8000
+> {"ok":0,"error":"invalid name or password!","result":null}
+
+$ curl --header "content-type: application/nepq" --data "create user(name: \"user1\", pwd: \"1234\")" localhost:8000
+> {"ok":1,"error":null,"result":{"id":0,"name":"user1","pwd":"1234"}}
+
+$ curl --header "content-type: application/nepq" --data "create user(name: \"user2\", pwd: \"6666\") { }" localhost:8000
+> {"ok":1,"error":null,"result":{}}
+
+$ curl --header "content-type: application/nepq" --data "read user(name: \"user2\") { id, pwd }" localhost:8000
+> {"ok":1,"error":null,"result":{"id":1,"pwd":"6666"}}
+```
+
+
 
 ## Syntax
 
@@ -38,7 +103,7 @@ The syntax of nepq is influenced by Facebook's GraphQL but not complex.
 
 **param**: parameters, can be json.
 
-**retrieve**: fields that server will include in response, can be null or empty.
+**retrieve**: fields that server will include in response. If retrieve is null, server should return all fields.
 
 Request will be converted into json.
 
@@ -70,9 +135,6 @@ create db.user({
   id
 }
 ```
-
-will convert to
-
 ```json
 {
   "method": "create",
@@ -107,9 +169,6 @@ read db.user(email: "me@email.com") {
   }
 }
 ```
-
-will convert to
-
 ```json
 {
   "method": "read",
@@ -132,14 +191,31 @@ will convert to
 
 ##### Update
 
-```
-// TODO
-```
+Update method can be implement many ways.
 
-will convert to
+For example
 
+```
+update db.user(select: {"id": 1234 }, update: {
+  "email": "me2@mail.com"
+}) { }
+```
 ```json
-// TODO
+{
+  "method": "update",
+  "namespace": [ "db" ],
+  "name": "user",
+  "param": {
+    "select": {
+      "id": 1234
+    },
+    "update": {
+      "email": "me2@mail.com"
+    }
+  },
+  "retrieve": {
+  }
+}
 ```
 
 ##### Delete
@@ -147,9 +223,6 @@ will convert to
 ```
 delete db.user(id: 1234) { }
 ```
-
-will convert to
-
 ```json
 {
   "method": "delete",
@@ -168,9 +241,6 @@ or
 ```
 delete db.user(id: 1234)
 ```
-
-will convert to
-
 ```json
 {
   "method": "delete",
@@ -185,7 +255,7 @@ will convert to
 
 ### Response:
 
-Response is json with pattern.
+Response is a simple json.
 
 ```ts
 interface Response {
