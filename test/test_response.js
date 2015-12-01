@@ -14,7 +14,8 @@ n.on('read', 'test.t', 'user', function(q) {
     user: 'user1',
     pwd: '1234',
     email: 'user1@test.com',
-    age: 3,
+    age: 0,
+    value: 134,
     address: {
       country: 'TH',
       province: 'Bangkok'
@@ -34,11 +35,11 @@ var cases = [
     res: { ok: 1, error: null, result: null }
   },
   {
-    nepq: 'read test.t.user() { pwd, age, address: { country } }',
+    nepq: 'read test.t.user() { pwd, age, address: { country }, value }',
     res: {
       ok: 1,
       error: null,
-      result: { pwd: '1234', age: 3, address: { country: 'TH' } }
+      result: { pwd: '1234', age: 0, address: { country: 'TH' }, value: 134 }
     }
   },
   {

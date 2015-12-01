@@ -125,7 +125,7 @@ module nepq {
 
       r.result = this.retrieve;
       traverse(r.result).forEach(function(x) {
-        if (x === 1) this.update(traverse(result).get(this.path) || null);
+        if (x === 1) this.update(traverse(result).get(this.path));
         else if (x === 0) this.remove();
       });
 
