@@ -5,11 +5,11 @@ var nepq = require('../build/'),
 
 var n = nepq();
 
-n.on('create', 'test', 'user', function(param) {
+n.on('create', 'test', 'user', function(q) {
   return n.response(null, null);
 });
 
-n.on('read', 'test.t', 'user', function(param) {
+n.on('read', 'test.t', 'user', function(q) {
   return n.response({
     user: 'user1',
     pwd: '1234',
@@ -22,7 +22,7 @@ n.on('read', 'test.t', 'user', function(param) {
   }, null);
 });
 
-n.on('delete', 'a.b.c', 'user', function(param) {
+n.on('delete', 'a.b.c', 'user', function(q) {
   return n.response(null, 'error');
 });
 

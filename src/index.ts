@@ -63,15 +63,15 @@ module nepq {
       return this.callbacks && this.callbacks[name] && this.callbacks[name][method];
     }
 
-    private process(req: http.IncomingMessage, res: http.ServerResponse, next: Function): void {
-      let { method, namespace, name, param, retrieve } = req['body'];
+    private process(req, res, next: Function): void {
+      let { method, namespace, name, param, retrieve } = req.body;
       if (!name || !method) return;
       this.retrieve = retrieve;
       let r = null;
       if (namespace && namespace !== '') {
         let ns = namespace.join('.');
         if (this.checkCallback(ns, name, method)) {
-          r = this.callbacks[ns][name][method](param, retrieve, req, res, next);
+          r = this.callbacks[ns][name][method](req.body, req, res, next);
         }
         else {
           next();
@@ -79,7 +79,7 @@ module nepq {
       }
       else {
         if (this.checkCallback(null, name, method)) {
-          r = this.callbacks[name][method](param, retrieve, req, res, next);
+          r = this.callbacks[name][method](req.body, req, res, next);
         }
         else {
           next();
@@ -92,7 +92,7 @@ module nepq {
     }
 
     on(method: string, namespace: string, name: string,
-      callback: (param: any, retrieve: any, req: http.IncomingMessage, res: http.ServerResponse, next: Function) => Response|void): void {
+      callback: (q: Request, req, res, next: Function) => Response|void): void {
       if (!namespace || namespace === '') {
         if (!this.callbacks[name]) this.callbacks[name] = { };
         this.callbacks[name][method] = callback;
