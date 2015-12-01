@@ -19,10 +19,6 @@
 true                                    return 'true';
 false                                   return 'false';
 null                                    return 'null';
-create                                  return 'create';
-read                                    return 'read';
-update                                  return 'update';
-delete                                  return 'delete';
 [1-9]                                   return 'digit1_9';
 [0-9]                                   return 'digit';
 \"                                      { this.begin('string'); yystr = ''; }
@@ -45,7 +41,7 @@ delete                                  return 'delete';
 %%
 
 nepq
-  : crud name parameters rets eof
+  : id name parameters rets eof
     {
       $$ = {
         method: $1,
@@ -56,13 +52,6 @@ nepq
       }
       return $$;
     }
-  ;
-
-crud
-  : create
-  | read
-  | update
-  | delete
   ;
 
 name
