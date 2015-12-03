@@ -71,7 +71,7 @@ The syntax of nepq is influenced by Facebook's GraphQL but not complex.
 }
 ```
 
-**method**: one of CRUD (create, read, update, delete).
+**method**: method can be anything (ex. CRUD: create, read, update, delete).
 
 **namespace**: namespace, can be nested or empty.
 
@@ -94,9 +94,6 @@ interface Request {
 ```
 
 #### Example:
-
-##### Create
-
 ```
 create db.user({
   "username": "me",
@@ -131,9 +128,7 @@ create db.user({
   }
 }
 ```
-
-##### Read
-
+---
 ```
 read db.user(email: "me@email.com") {
   id,
@@ -164,13 +159,7 @@ read db.user(email: "me@email.com") {
   }
 }
 ```
-
-##### Update
-
-Update method can be implement many ways.
-
-For example
-
+---
 ```
 update db.user(select: {"id": 1234 }, update: {
   "email": "me2@mail.com"
@@ -193,27 +182,7 @@ update db.user(select: {"id": 1234 }, update: {
   }
 }
 ```
-
-##### Delete
-
-```
-delete db.user(id: 1234) { }
-```
-```json
-{
-  "method": "delete",
-  "namespace": [ "db" ],
-  "name": "user",
-  "param": {
-    "id": 1234
-  },
-  "retrieve": {
-  }
-}
-```
-
-or
-
+---
 ```
 delete db.user(id: 1234)
 ```
