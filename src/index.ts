@@ -1,6 +1,5 @@
 /// <reference path="../typings/tsd.d.ts"/>
 
-import * as http from 'http';
 var parser = require('./lib/parser');
 var traverse = require('traverse');
 
@@ -38,7 +37,7 @@ module nepq {
       return r;
     }
 
-    bodyParser(): (req: http.IncomingMessage, res: http.ServerResponse, next: Function) => void {
+    bodyParser(): (req, res, next: Function) => void {
       let _ = this;
       return (req, res, next) => {
         if (req.headers['content-type'] !== 'application/nepq') { next(); return; }

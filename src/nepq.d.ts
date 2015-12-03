@@ -1,5 +1,4 @@
 declare module "nepq" {
-  import * as http from 'http';
 
   function n(): n.NepQ;
 
@@ -27,14 +26,14 @@ declare module "nepq" {
 
       parse(data: string): Request;
 
-      bodyParser(): (req: http.IncomingMessage, res: http.ServerResponse, next: Function) => void;
+      bodyParser(): (req, res, next: Function) => void;
 
       private checkCallback(namespace: string, name: string, method: string): boolean;
 
-      private process(req: http.IncomingMessage, res: http.ServerResponse, next: Function): void;
+      private process(req, res, next: Function): void;
 
       on(method: string, namespace: string, name: string,
-        callback: (param: any, retrieve: any, req: http.IncomingMessage, res: http.ServerResponse, next: Function) => Response|void): void;
+        callback: (param: any, retrieve: any, req, res, next: Function) => Response|void): void;
 
       response(result: any, error: any): Response;
     }
