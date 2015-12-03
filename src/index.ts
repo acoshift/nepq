@@ -124,8 +124,13 @@ module nepq {
       }
 
       r.result = this.retrieve;
+      let _this = this;
       traverse(r.result).forEach(function(x) {
-        if (x === 1) this.update(traverse(result).get(this.path));
+        if (x === 1) {
+          let k = traverse(result).get(this.path);
+          if (typeof k === 'function') this.update(k(_this.data));
+          else this.update(k);
+        }
         else if (x === 0) this.remove();
       });
 

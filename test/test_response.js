@@ -15,9 +15,9 @@ n.on('read', 'test.t', 'user', function(q) {
     pwd: '1234',
     email: 'user1@test.com',
     age: 0,
-    value: 134,
+    value: function() { return 134; },
     address: {
-      country: 'TH',
+      country: function() { return 'TH'; },
       province: 'Bangkok'
     }
   }, null);
