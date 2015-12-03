@@ -8,62 +8,40 @@
 Nep Query is an easy query pattern.
 
 ## Usage
-`$ npm install nepq`
-
-#### Example
-```
-$ npm init
-$ npm install express --save
-$ npm install nepq --save
-$ npm install -g typescript tsd
-$ tsc --init
-$ tsd init
-$ tsd install express --save
-```
-index.ts
-```ts
-/// <reference path="./typings/tsd.d.ts"/>
-/// <reference path="./node_modules/nepq/nepq.d.ts"/>
-
-import * as nepq from 'nepq';
-import * as express from 'express';
+```js
+var nepq = require('nepq')(),
+    express = require('express');
 
 var app = express(),
-    nepParser = nepq(),
     users = [],
     _id = 0;
 
-nepParser.on('create', null, 'user', (param) => {
-  if (!param.name || !param.pwd) return nepParser.response(null, 'invalid name or password!');
-  let user = {
+nepq.on('create', null, 'user', function (q) {
+  if (!q.param.name || !q.param.pwd) return nepq.response(null, 'invalid name or password!');
+  var user = {
     id: _id++,
-    name: param.name,
-    pwd: param.pwd
+    name: q.param.name,
+    pwd: q.param.pwd
   };
   users.push(user);
-  return nepParser.response(user, null);
+  return nepq.response(user, null);
 });
 
-nepParser.on('read', null, 'user', (param) => {
-  let user = users.filter((x) => {
-    return (!param.id || param.id === x.id) && (!param.name || param.name === x.name) && (!param.pwd || x.pwd);
+nepq.on('read', null, 'user', function (q) {
+  var user = users.filter(function (x) {
+    return (!q.param.id || q.param.id === x.id) && (!q.param.name || q.param.name === x.name) && (!q.param.pwd || x.pwd);
   });
-  return nepParser.response(user ? user[0] : null, null);
+  return nepq.response(user ? user[0] : null, null);
 });
 
-app.use(nepParser.bodyParser());
+app.use(nepq.bodyParser());
 
-app.use((req, res) => {
-  res.json(nepParser.response(null, 'no api'));
+app.use(function (req, res) {
+  res.json(nepq.response(null, 'no api'));
 });
 
 app.listen(8000);
 ```
-```
-$ tsc -p .
-$ node build/index.js
-```
-
 ```
 $ curl localhost:8000
 > {"ok":0,"error":"no api","result":null}
@@ -80,8 +58,6 @@ $ curl --header "content-type: application/nepq" --data "create user(name: \"use
 $ curl --header "content-type: application/nepq" --data "read user(name: \"user2\") { id, pwd }" localhost:8000
 > {"ok":1,"error":null,"result":{"id":1,"pwd":"6666"}}
 ```
-
-
 
 ## Syntax
 
