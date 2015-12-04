@@ -50,9 +50,12 @@ var cases = [
 
 // test
 
+n.res = { writeHead: function(){}, end: function(r) {
+  var k = JSON.parse(r);
+  assert.deepEqual(n.__json, k);
+}};
+
 cases.forEach(function(x) {
-  n.process({body: n.parse(x.nepq)}, { writeHead: function(){}, end: function(r) {
-    var k = JSON.parse(r);
-    assert.deepEqual(x.res, k);
-  } });
+  n.__json = x.res;
+  n.parse(x.nepq);
 });

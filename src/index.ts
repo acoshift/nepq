@@ -19,17 +19,21 @@ module nepq {
   }
 
   export class NepQ {
-    private data: Request;
-    private retrieve;
+    private request: Request;
     private callbacks: any;
+    private callbackIndex: number;
+    private req: any;
+    private res: any;
 
     constructor() {
-      this.data = null;
-      this.retrieve = null;
-      this.callbacks = {};
+      this.request = null;
+      this.callbacks = [];
+      this.callbackIndex = 0;
+      this.req = null;
+      this.res = null;
     }
 
-    parse(data: string): Request {
+    _parse(data: string): Request {
       let r = null;
       try {
         r = parser.parse(data);
@@ -37,69 +41,55 @@ module nepq {
       return r;
     }
 
+    parse(data: string): void {
+      this.request = this._parse(data);
+      if (this.request) {
+        this.callbackIndex = 0;
+        this.callCallback();
+      }
+    }
+
     bodyParser(): (req, res, next: Function) => void {
       let _ = this;
       return (req, res, next) => {
+        _.req = req;
+        _.res = res;
+
         if (req.headers['content-type'] !== 'application/nepq') { next(); return; }
 
         let data = '';
         req.setEncoding('utf8');
         req.on('data', function(d) { data += d; });
         req.on('end', function() {
-          _.data = _.parse(data);
-          if (_.data) {
-            req['body'] = _.data;
-            _.process(req, res, next);
-          }
+          _.parse(data);
         });
       }
     }
 
-    private checkCallback(namespace: string, name: string, method: string): boolean {
-      if (namespace) {
-        return this.callbacks && this.callbacks[namespace] && this.callbacks[namespace][name] && this.callbacks[namespace][name][method];
+    private callCallback(): void {
+      let c = this.callbacks[this.callbackIndex++];
+      if (c) {
+        let d = this.request;
+        let ns = d.namespace ? d.namespace.join('.') : null;
+        if (c.method && c.method !== d.method) { this.callCallback(); return; }
+        if (c.namespace && c.namespace !== ns) { this.callCallback(); return; }
+        if (c.name && c.name !== d.name) { this.callbacks(); return; }
+
+        this.process(c.callback(d, this.req, this.res, this.callCallback));
       }
-      return this.callbacks && this.callbacks[name] && this.callbacks[name][method];
     }
 
-    private process(req, res, next: Function): void {
-      let { method, namespace, name, param, retrieve } = req.body;
-      if (!name || !method) return;
-      this.retrieve = retrieve;
-      let r = null;
-      if (namespace && namespace !== '') {
-        let ns = namespace.join('.');
-        if (this.checkCallback(ns, name, method)) {
-          r = this.callbacks[ns][name][method](req.body, req, res, next);
-        }
-        else {
-          next();
-        }
-      }
-      else {
-        if (this.checkCallback(null, name, method)) {
-          r = this.callbacks[name][method](req.body, req, res, next);
-        }
-        else {
-          next();
-        }
-      }
+    private process(r): void {
+      let { method, namespace, name, param, retrieve } = this.request;
       if (r) {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(r));
+        this.res.writeHead(200, { 'Content-Type': 'application/json' });
+        this.res.end(JSON.stringify(r));
       }
     }
 
     on(method: string, namespace: string, name: string,
       callback: (q: Request, req, res, next: Function) => Response|void): void {
-      if (!namespace || namespace === '') {
-        if (!this.callbacks[name]) this.callbacks[name] = { };
-        this.callbacks[name][method] = callback;
-        return;
-      }
-      if (!this.callbacks[namespace]) this.callbacks[namespace] = { };
-      if (!this.callbacks[namespace][name]) this.callbacks[namespace][name] = { };
-      this.callbacks[namespace][name][method] = callback;
+      this.callbacks.push({ method: method, namespace: namespace, name: name, callback: callback });
     }
 
     response(result: any, error: any): Response {
@@ -117,17 +107,17 @@ module nepq {
         result: {}
       };
 
-      if (!this.retrieve) {
+      if (!this.request.retrieve) {
         r.result = result;
         return r;
       }
 
-      r.result = this.retrieve;
+      r.result = this.request.retrieve;
       let _this = this;
       traverse(r.result).forEach(function(x) {
         if (x === 1) {
           let k = traverse(result).get(this.path);
-          if (typeof k === 'function') this.update(k(_this.data));
+          if (typeof k === 'function') this.update(k(_this.request));
           else this.update(k);
         }
         else if (x === 0) this.remove();
