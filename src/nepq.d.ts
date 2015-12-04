@@ -28,7 +28,7 @@ declare module "nepq" {
       bodyParser(): (req, res, next: Function) => void;
 
       on(method: string, namespace: string, name: string,
-        callback: (q: Request, param: any, retrieve: any, req, res, next: Function) => Response|void): void;
+        callback: (q: Request, req, res, next: Function) => void): void;
 
       response(result: any, error?: any): Response;
     }
