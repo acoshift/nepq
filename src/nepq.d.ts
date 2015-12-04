@@ -20,20 +20,15 @@ declare module "nepq" {
     export class NepQ {
       private data: Request;
       private retrieve;
-      private callbacks: any;
 
       constructor();
 
-      parse(data: string): Request;
+      parse(data: string): void;
 
       bodyParser(): (req, res, next: Function) => void;
 
-      private checkCallback(namespace: string, name: string, method: string): boolean;
-
-      private process(req, res, next: Function): void;
-
       on(method: string, namespace: string, name: string,
-        callback: (param: any, retrieve: any, req, res, next: Function) => Response|void): void;
+        callback: (q: Request, param: any, retrieve: any, req, res, next: Function) => Response|void): void;
 
       response(result: any, error: any): Response;
     }
