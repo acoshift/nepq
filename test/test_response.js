@@ -6,11 +6,11 @@ var nepq = require('../build/'),
 var n = nepq();
 
 n.on('create', 'test', 'user', function(q) {
-  return n.response(null, null);
+  n.response(null, null);
 });
 
 n.on('read', 'test.t', 'user', function(q) {
-  return n.response({
+  n.response({
     user: 'user1',
     pwd: '1234',
     email: 'user1@test.com',
@@ -24,7 +24,7 @@ n.on('read', 'test.t', 'user', function(q) {
 });
 
 n.on('delete', 'a.b.c', 'user', function(q) {
-  return n.response(null, 'error');
+  n.response(null, 'error');
 });
 
 var p = n.bodyParser();

@@ -30,7 +30,7 @@ declare module "nepq" {
       on(method: string, namespace: string, name: string,
         callback: (q: Request, param: any, retrieve: any, req, res, next: Function) => Response|void): void;
 
-      response(result: any, error: any): Response;
+      response(result: any, error?: any): Response;
     }
   }
   export = n;

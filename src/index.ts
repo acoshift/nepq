@@ -70,38 +70,38 @@ module nepq {
       let c = this.callbacks[this.callbackIndex++];
       if (c) {
         let d = this.request;
-        let ns = d.namespace ? d.namespace.join('.') : null;
-        if (c.method && c.method !== d.method) { this.callCallback(); return; }
-        if (c.namespace && c.namespace !== ns) { this.callCallback(); return; }
-        if (c.name && c.name !== d.name) { this.callbacks(); return; }
+        let ns = d.namespace ? d.namespace.join('.') : '';
+        if (c.method !== null && c.method !== d.method) { this.callCallback(); return; }
+        if (c.namespace !== null && c.namespace !== ns) { this.callCallback(); return; }
+        if (c.name !== null && c.name !== d.name) { this.callCallback(); return; }
 
-        this.process(c.callback(d, this.req, this.res, this.callCallback));
+        c.callback(d, this.req, this.res, this.callCallback);
+        return;
       }
-    }
-
-    private process(r): void {
-      let { method, namespace, name, param, retrieve } = this.request;
-      if (r) {
-        this.res.writeHead(200, { 'Content-Type': 'application/json' });
-        this.res.end(JSON.stringify(r));
-      }
+      this.callCallback();
     }
 
     on(method: string, namespace: string, name: string,
-      callback: (q: Request, req, res, next: Function) => Response|void): void {
+      callback: (q: Request, req, res, next: Function) => void): void {
       this.callbacks.push({ method: method, namespace: namespace, name: name, callback: callback });
     }
 
-    response(result: any, error: any): Response {
+    response(result: any, error?: any): void {
+      let done = (r): void => {
+        this.res.writeHead(200, { 'Content-Type': 'application/json' });
+        this.res.end(JSON.stringify(r));
+      };
+
       if (!result || error) {
-        return {
+        done({
           ok: error ? 0 : 1,
           error: error || null,
           result: null
-        };
+        });
+        return;
       }
 
-      var r = {
+      let r = {
         ok: 1,
         error: null,
         result: {}
@@ -109,21 +109,22 @@ module nepq {
 
       if (!this.request.retrieve) {
         r.result = result;
-        return r;
+        done(r);
+        return;
       }
 
       r.result = this.request.retrieve;
-      let _this = this;
+      let _ = this;
       traverse(r.result).forEach(function(x) {
         if (x === 1) {
           let k = traverse(result).get(this.path);
-          if (typeof k === 'function') this.update(k(_this.request));
+          if (typeof k === 'function') this.update(k(_.request));
           else this.update(k);
         }
         else if (x === 0) this.remove();
       });
 
-      return r;
+      done(r);
     }
   }
 }
