@@ -17,28 +17,31 @@ var app = express(),
     _id = 0;
 
 nepq.on('create', null, 'user', function (q) {
-  if (!q.param.name || !q.param.pwd) return nepq.response(null, 'invalid name or password!');
+  if (!q.param.name || !q.param.pwd) {
+    nepq.response(null, 'invalid name or password!');
+    return;
+  }
   var user = {
     id: _id++,
     name: q.param.name,
     pwd: q.param.pwd
   };
   users.push(user);
-  return nepq.response(user, null);
+  nepq.response(user, null);
 });
 
 nepq.on('read', null, 'user', function (q) {
   var user = users.filter(function (x) {
     return (!q.param.id || q.param.id === x.id) && (!q.param.name || q.param.name === x.name) && (!q.param.pwd || x.pwd);
   });
-  return nepq.response(user ? user[0] : null, null);
+  nepq.response(user ? user[0] : null, null);
+});
+
+nepq.on(null, null, null, function (q) {
+  nepq.response(null, 'no api');
 });
 
 app.use(nepq.bodyParser());
-
-app.use(function (req, res) {
-  res.json(nepq.response(null, 'no api'));
-});
 
 app.listen(8000);
 ```
