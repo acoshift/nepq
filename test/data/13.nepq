@@ -1,0 +1,1 @@
+create test.product(name: "p1", price: 100) { }

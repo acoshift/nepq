@@ -189,9 +189,11 @@ exp
     { $$ = $1 + $2; }
   ;
 
-digits
+ digits
   : digit
   | digit1_9
+  | digit digits
+    { $$ = $1 + $2; }
   | digit1_9 digits
     { $$ = $1 + $2; }
   ;
