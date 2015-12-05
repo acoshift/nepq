@@ -1,0 +1,12 @@
+{
+	"method": "read",
+	"namespace": [ "stock" ],
+	"name": "product",
+	"param": {
+    "price": 100,
+    "$limit": 10
+	},
+	"retrieve": {
+    "name": 1
+  }
+}

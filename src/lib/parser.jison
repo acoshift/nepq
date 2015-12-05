@@ -33,7 +33,7 @@ null                                    return 'null';
 <string>\\\/                            yystr += '\/';
 <string>[^\"\\]+                        yystr += yytext;
 <string>\"                              { this.popState(); yytext = yystr; return 'string'; }
-[a-zA-Z_][a-zA-Z0-9_]*                  return 'id';
+[\$]?[a-zA-Z_][a-zA-Z0-9_]*             return 'id';
 /lex
 
 %start nepq
