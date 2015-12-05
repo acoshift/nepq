@@ -54,9 +54,7 @@ class NepQ {
       if (c.name !== null && c.name !== d.name) { this._callCallback(); return; }
 
       c.callback(d, this.req, this.res, this._callCallback);
-      return;
     }
-    this._callCallback();
   }
 
   on(method, namespace, name, callback) {
