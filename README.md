@@ -33,7 +33,9 @@ nepq.on('create', '', 'user', function (q) {
 
 nepq.on('read', '', 'user', function (q) {
   var user = users.filter(function (x) {
-    return (!q.param.id || q.param.id === x.id) && (!q.param.name || q.param.name === x.name) && (!q.param.pwd || x.pwd);
+    return (!q.param.id || q.param.id === x.id) &&
+           (!q.param.name || q.param.name === x.name) &&
+           (!q.param.pwd || x.pwd);
   });
   nepq.response(user ? user[0] : null);
 });
@@ -46,6 +48,7 @@ app.use(nepq.bodyParser());
 
 app.listen(8000);
 ```
+
 ```
 $ curl localhost:8000
 > {"ok":0,"error":"no api"}
