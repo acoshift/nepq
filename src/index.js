@@ -72,6 +72,8 @@ class NepQ {
     error = (typeof error === 'undefined') ? null : error;
 
     let done = r => {
+      if (r.error === null) delete r.error;
+      if (r.result === null) delete r.result;
       this.res.writeHead(200, { 'Content-Type': 'application/json' });
       this.res.end(JSON.stringify(r));
     };

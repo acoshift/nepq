@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/acoshift/nepq.svg?branch=master)](https://travis-ci.org/acoshift/nepq)
 [![github tag](https://img.shields.io/github/tag/acoshift/nepq.svg)]()
+[![github commit](https://img.shields.io/github/commits-since/acoshift/nepq/v0.3.1.svg)]()
 [![npm version](https://img.shields.io/npm/v/nepq.svg)](https://www.npmjs.com/package/nepq)
 [![npm license](https://img.shields.io/npm/l/nepq.svg)]()
 
@@ -16,7 +17,7 @@ var app = express(),
     users = [],
     _id = 0;
 
-nepq.on('create', null, 'user', function (q) {
+nepq.on('create', '', 'user', function (q) {
   if (!q.param.name || !q.param.pwd) {
     nepq.response(null, 'invalid name or password!');
     return;
@@ -27,17 +28,17 @@ nepq.on('create', null, 'user', function (q) {
     pwd: q.param.pwd
   };
   users.push(user);
-  nepq.response(user, null);
+  nepq.response(user);
 });
 
-nepq.on('read', null, 'user', function (q) {
+nepq.on('read', '', 'user', function (q) {
   var user = users.filter(function (x) {
     return (!q.param.id || q.param.id === x.id) && (!q.param.name || q.param.name === x.name) && (!q.param.pwd || x.pwd);
   });
-  nepq.response(user ? user[0] : null, null);
+  nepq.response(user ? user[0] : null);
 });
 
-nepq.on(null, null, null, function (q) {
+nepq.use(function (q) {
   nepq.response(null, 'no api');
 });
 
@@ -47,20 +48,22 @@ app.listen(8000);
 ```
 ```
 $ curl localhost:8000
-> {"ok":0,"error":"no api","result":null}
+> {"ok":0,"error":"no api"}
 
 $ curl --header "content-type: application/nepq" --data "create user() {}" localhost:8000
-> {"ok":0,"error":"invalid name or password!","result":null}
+> {"ok":0,"error":"invalid name or password!"}
 
 $ curl --header "content-type: application/nepq" --data "create user(name: \"user1\", pwd: \"1234\")" localhost:8000
-> {"ok":1,"error":null,"result":{"id":0,"name":"user1","pwd":"1234"}}
+> {"ok":1,"result":{"id":0,"name":"user1","pwd":"1234"}}
 
 $ curl --header "content-type: application/nepq" --data "create user(name: \"user2\", pwd: \"6666\") { }" localhost:8000
-> {"ok":1,"error":null,"result":{}}
+> {"ok":1,"result":{}}
 
 $ curl --header "content-type: application/nepq" --data "read user(name: \"user2\") { id, pwd }" localhost:8000
-> {"ok":1,"error":null,"result":{"id":1,"pwd":"6666"}}
+> {"ok":1,"result":{"id":1,"pwd":"6666"}}
 ```
+
+---
 
 ## Syntax
 
@@ -203,22 +206,21 @@ delete db.user(id: 1234)
 
 ### Response:
 
-Response is a simple json.
-
 ```ts
 interface Response {
   ok: number;
-  error: any;
-  result: any;
+  error?: any;
+  result?: any;
 }
 ```
+
+For error and result, will be delete from response if null.
 
 Example:
 
 ```json
 {
   "ok": 1,
-  "error": null,
   "result": {
     "id": 1234,
     "username": "me",
@@ -230,3 +232,8 @@ Example:
   }
 }
 ```
+
+---
+
+## API
+// TODO

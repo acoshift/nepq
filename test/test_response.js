@@ -32,19 +32,18 @@ var p = n.bodyParser();
 var cases = [
   {
     nepq: 'create test.user()',
-    res: { ok: 1, error: null, result: null }
+    res: { ok: 1 }
   },
   {
     nepq: 'read test.t.user() { pwd, age, address: { country }, value }',
     res: {
       ok: 1,
-      error: null,
       result: { pwd: '1234', age: 0, address: { country: 'TH' }, value: 134 }
     }
   },
   {
     nepq: 'delete a.b.c.user() { }',
-    res: { ok: 0, error: 'error', result: null }
+    res: { ok: 0, error: 'error' }
   }
 ];
 

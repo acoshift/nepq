@@ -13,8 +13,8 @@ declare module "nepq" {
 
     export interface Response {
       ok: number;
-      error: any;
-      result: any;
+      error?: any;
+      result?: any;
     }
 
     export class NepQ {
