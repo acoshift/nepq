@@ -2,5 +2,9 @@
   "compilerOptions": {
     "target": "ES6",
     "module": "commonjs"
-  }
+  },
+  "files": [
+    "src/index.js",
+    "typings/tsd.d.ts"
+  ]
 }
