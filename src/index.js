@@ -4,8 +4,8 @@ import traverse from 'traverse';
 class NepQ {
   constructor() {
     this.request = null;
-    this.callbacks = [];
-    this.callbackIndex = 0;
+    this._callbacks = [];
+    this._callbackIndex = 0;
     this.req = null;
     this.res = null;
   }
@@ -15,7 +15,7 @@ class NepQ {
       parse(s) {
         let r = null;
         try {
-          r = this.parser.parse(s);
+          r = parser.parse(s);
         } catch (e) { }
         return r;
       }
@@ -25,49 +25,53 @@ class NepQ {
   parse(s) {
     this.request = this.parser.parse(s);
     if (this.request) {
-      this.callbackIndex = 0;
-      this.callCallback();
+      this._callbackIndex = 0;
+      this._callCallback();
     }
   }
 
   bodyParser() {
-    let _ = this;
     return (req, res, next) => {
-      _.req = req;
-      _.res = res;
+      this.req = req;
+      this.res = res;
 
       if (req.headers['content-type'] !== 'application/nepq') { next(); return; }
 
       let data = '';
       req.setEncoding('utf8');
-      req.on('data', function(d) { data += d; });
-      req.on('end', function() {
-        _.parse(data);
-      });
+      req.on('data', d => { data += d; });
+      req.on('end', () => { this.parse(data); });
     };
   }
 
-  callCallback() {
-    let c = this.callbacks[this.callbackIndex++];
+  _callCallback() {
+    let c = this._callbacks[this._callbackIndex++];
     if (c) {
       let d = this.request;
       let ns = d.namespace ? d.namespace.join('.') : '';
-      if (c.method !== null && c.method !== d.method) { this.callCallback(); return; }
-      if (c.namespace !== null && c.namespace !== ns) { this.callCallback(); return; }
-      if (c.name !== null && c.name !== d.name) { this.callCallback(); return; }
+      if (c.method !== null && c.method !== d.method) { this._callCallback(); return; }
+      if (c.namespace !== null && c.namespace !== ns) { this._callCallback(); return; }
+      if (c.name !== null && c.name !== d.name) { this._callCallback(); return; }
 
-      c.callback(d, this.req, this.res, this.callCallback);
+      c.callback(d, this.req, this.res, this._callCallback);
       return;
     }
-    this.callCallback();
+    this._callCallback();
   }
 
   on(method, namespace, name, callback) {
-    this.callbacks.push({ method: method, namespace: namespace, name: name, callback: callback });
+    this._callbacks.push({ method: method, namespace: namespace, name: name, callback: callback });
+  }
+
+  use(callback) {
+    this._callbacks.push({ method: null, namespace: null, name: null, callback: callback });
   }
 
   response(result, error) {
-    let done = (r) => {
+    result = (typeof result === 'undefined') ? null : result;
+    error = (typeof error === 'undefined') ? null : error;
+
+    let done = r => {
       this.res.writeHead(200, { 'Content-Type': 'application/json' });
       this.res.end(JSON.stringify(r));
     };
