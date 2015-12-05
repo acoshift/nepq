@@ -1,8 +1,8 @@
 var gulp = require('gulp'),
     jison = require('gulp-jison'),
-    typescript = require('gulp-tsc'),
     mocha = require('gulp-mocha'),
-    del = require('del');
+    del = require('del'),
+    babel = require('gulp-babel');
 
 var paths = {
   src: './src/',
@@ -27,12 +27,7 @@ gulp.task('jison', function() {
 
 gulp.task('js', function() {
   return gulp.src(paths.src + '**/*.js')
-    .pipe(gulp.dest(paths.build));
-});
-
-gulp.task('ts', function() {
-  return gulp.src([paths.src + '**/*.ts', '!**/*.d.ts'])
-    .pipe(typescript({ module: 'commonjs', target: 'ES5', removeComments: false, sourceMap: false, declaration: false }))
+    .pipe(babel({ presets: ['es2015']}))
     .pipe(gulp.dest(paths.build));
 });
 
@@ -60,6 +55,6 @@ gulp.task('clean', ['clean-dist', 'clean-build']);
 
 gulp.task('test', ['build', 'test-parser', 'test-response']);
 
-gulp.task('build', ['jison', 'js', '.d.ts', 'ts']);
+gulp.task('build', ['jison', 'js', '.d.ts']);
 
 gulp.task('default', ['build']);

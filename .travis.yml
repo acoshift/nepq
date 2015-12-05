@@ -7,5 +7,4 @@ node_js:
 sudo: false
 
 before_script:
-  - npm install -g gulp typescript tsd
-  - tsd install
+  - npm install -g gulp babel

@@ -23,7 +23,6 @@
         "!typings/**"
     ],
     "files": [
-        "src/index.ts",
         "src/nepq.d.ts"
     ],
     "formatCodeOptions": {
