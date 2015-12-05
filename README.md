@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/acoshift/nepq.svg?branch=master)](https://travis-ci.org/acoshift/nepq)
 [![github tag](https://img.shields.io/github/tag/acoshift/nepq.svg)]()
-[![github commit](https://img.shields.io/github/commits-since/acoshift/nepq/v0.3.1.svg)]()
+[![github commit](https://img.shields.io/github/commits-since/acoshift/nepq/v0.3.2.svg)]()
 [![npm version](https://img.shields.io/npm/v/nepq.svg)](https://www.npmjs.com/package/nepq)
 [![npm license](https://img.shields.io/npm/l/nepq.svg)]()
 
