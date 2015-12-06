@@ -95,8 +95,15 @@ parameters
     { $$ = {}; }
   | '(' params ')'
     { $$ = $2; }
-  | '(' object ')'
-    { $$ = $2; }
+  | '(' anparams ')'
+    { $$ = $2.length === 1 ? $2[0] : $2; }
+  ;
+
+anparams
+  : value
+    { $$ = [ $1 ]; }
+  | value ',' anparams
+    { $$ = $3; $$.unshift($1); }
   ;
 
 object
