@@ -133,6 +133,8 @@ members
 pair
   : string ':' value
     { $$ = {}; $$[$1] = $3; }
+  | id ':' value
+    { $$ = {}; $$[$1] = $3; }
   ;
 
 array
