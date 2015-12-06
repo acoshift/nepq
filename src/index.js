@@ -97,16 +97,32 @@ class NepQ {
       return;
     }
 
-    r.result = this.request.retrieve;
     let _ = this;
-    traverse(r.result).forEach(function(x) {
-      if (x === 1) {
-        let k = traverse(result).get(this.path);
-        if (typeof k === 'function') this.update(k(_.request));
-        else this.update(k);
-      }
-      else if (x === 0) this.remove();
-    });
+
+    function make(r, result) {
+      traverse(r).forEach(function(x) {
+        if (x === 1) {
+          let k = traverse(result).get(this.path);
+          if (typeof k === 'function') this.update(k(_.request));
+          else this.update(k);
+        }
+        else if (x === 0) this.remove();
+      });
+    }
+
+    if (result instanceof Array) {
+      r.result = [];
+      result.forEach(function(x) {
+        let k = {};
+        Object.assign(k, _.request.retrieve);
+        make(k, x);
+        r.result.push(k);
+      });
+    }
+    else {
+      Object.assign(r.result, _.request.retrieve);
+      make(r.result, result);
+    }
 
     done(r);
   }

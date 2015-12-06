@@ -27,6 +27,14 @@ n.on('delete', 'a.b.c', 'user', function(q) {
   n.response(null, 'error');
 });
 
+n.on('read', '', 'array', function(q) {
+  n.response([
+    { id: 0, name: 'p0', b: false },
+    { id: 1, name: 'p1', b: true },
+    { id: 2, name: 'p2', b: null, k: 10 }
+  ]);
+});
+
 var p = n.bodyParser();
 
 var cases = [
@@ -44,17 +52,34 @@ var cases = [
   {
     nepq: 'delete a.b.c.user() { }',
     res: { ok: 0, error: 'error' }
+  },
+  {
+    nepq: 'read array() { id, name }',
+    res: {
+      ok: 1,
+      result: [
+        { id: 0, name: 'p0' },
+        { id: 1, name: 'p1' },
+        { id: 2, name: 'p2' }
+      ]
+    }
   }
 ];
 
 // test
 
+var test = 0;
+
 n.res = { writeHead: function(){}, end: function(r) {
   var k = JSON.parse(r);
   assert.deepEqual(n.__json, k);
+  --test;
 }};
 
 cases.forEach(function(x) {
+  ++test;
   n.__json = x.res;
   n.parse(x.nepq);
 });
+
+assert.equal(test, 0);
