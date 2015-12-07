@@ -1,0 +1,9 @@
+{
+  "method": "read",
+  "namespace": null,
+  "name": "",
+  "param": 10,
+  "retrieve": {
+    "name": 1
+  }
+}
