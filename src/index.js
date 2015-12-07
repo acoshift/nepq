@@ -99,29 +99,43 @@ class NepQ {
 
     let _ = this;
 
-    function make(r, result) {
+    function getResult(f) {
+      let r, t;
+      r = f(_.request, p => {
+        t = p;
+      });
+      return typeof t !== 'undefined' ? t : r;
+    }
+
+    function map(r) {
       traverse(r).forEach(function(x) {
-        if (x === 1) {
-          let k = traverse(result).get(this.path);
-          if (typeof k === 'function') this.update(k(_.request));
-          else this.update(k);
+        if (typeof x === 'function') {
+          this.update(getResult(x));
         }
-        else if (x === 0) this.remove();
+        let p = this.path;
+        let k = traverse(_.request.retrieve).get(p);
+        if (typeof k === 'undefined') {
+          while (p.length > 0) {
+            if (traverse(_.request.retrieve).get(p) === 1) return;
+            p.pop();
+          }
+          this.remove();
+        }
+        else if (k === 0) {
+          this.remove();
+        }
       });
     }
 
-    if (result instanceof Array) {
-      r.result = [];
-      result.forEach(function(x) {
-        let k = {};
-        Object.assign(k, _.request.retrieve);
-        make(k, x);
-        r.result.push(k);
+    r.result = result;
+
+    if (r.result instanceof Array) {
+      r.result.forEach(function(x) {
+        map(x);
       });
     }
     else {
-      Object.assign(r.result, _.request.retrieve);
-      make(r.result, result);
+      map(r.result)
     }
 
     done(r);

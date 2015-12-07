@@ -35,6 +35,30 @@ n.on('read', '', 'array', function(q) {
   ]);
 });
 
+n.on('read', '', 'func_callback', function(q) {
+  n.response({
+    test1: function(q) { return 'result from return'; },
+    test2: function(q, cb) { cb('result from callback'); }
+  })
+});
+
+n.on('read', '', 'func_callback2', function(q) {
+  n.response({
+    test1: function(q) {
+      return {
+        a: function(q) { return 'a'; },
+        b: function(q) { return 'b'; }
+      };
+    },
+    test2: function(q, cb) {
+      cb({
+        a: function(q, cb) { cb('a'); },
+        b: function(q, cb) { cb('b'); }
+      });
+    }
+  })
+});
+
 var p = n.bodyParser();
 
 var cases = [
@@ -62,6 +86,26 @@ var cases = [
         { id: 1, name: 'p1' },
         { id: 2, name: 'p2' }
       ]
+    }
+  },
+  {
+    nepq: 'read func_callback() { test1, test2 }',
+    res: {
+      ok: 1,
+      result: {
+        test1: 'result from return',
+        test2: 'result from callback'
+      }
+    }
+  },
+  {
+    nepq: 'read func_callback2() { test1, test2 { a } }',
+    res: {
+      ok: 1,
+      result: {
+        test1: { a: 'a', b: 'b' },
+        test2: { a: 'a' }
+      }
     }
   }
 ];
