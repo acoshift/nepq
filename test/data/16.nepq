@@ -1,1 +1,0 @@
-update stock.product({ id: 10 }, { $inc: { price: 40 } })

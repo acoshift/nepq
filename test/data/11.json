@@ -1,9 +1,0 @@
-{
-	"method": "delete",
-	"namespace": [ "myweb", "db" ],
-	"name": "user",
-	"param": {
-		"user": "user1"
-	},
-	"retrieve": {}
-}

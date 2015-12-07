@@ -1,1 +1,0 @@
-delete myweb.db.user(user: "user1") { }

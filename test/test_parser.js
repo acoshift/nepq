@@ -3,13 +3,15 @@ var nepq = require('../build/lib/parser').parser,
     path = require('path'),
     assert = require('assert');
 
-process.chdir(path.join(__dirname, 'data'));
-
-fs.readdirSync('.')
-  .filter(function(x) { return x.substr(-5) === '.nepq'; })
-  .map(function(x) { return x.substr(0, x.length - 5); })
+fs.readdirSync(path.join(__dirname, 'data'))
+  .filter(function(x) { return x.substr(-3) === '.js'; })
+  .map(function(x) { return x.substr(0, x.length - 3); })
   .forEach(function(x) {
-    var n = nepq.parse(fs.readFileSync(x + '.nepq').toString());
-    var j = JSON.parse(fs.readFileSync(x + '.json').toString());
-    assert.deepEqual(n, j);
+    it('parser: ' + x, function(cb) {
+      var t = require('./data/' + x);
+      var n = nepq.parse(t.nepq);
+      var o = t.obj;
+      assert.deepEqual(n, o);
+      cb();
+    });
   });

@@ -1,1 +1,0 @@
-create stock.product($: false, p$: 10, $$: "123", _: 1)

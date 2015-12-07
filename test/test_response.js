@@ -110,20 +110,14 @@ var cases = [
   }
 ];
 
-// test
-
-var test = 0;
-
-n.res = { writeHead: function(){}, end: function(r) {
-  var k = JSON.parse(r);
-  assert.deepEqual(n.__json, k);
-  --test;
-}};
-
-cases.forEach(function(x) {
-  ++test;
-  n.__json = x.res;
-  n.parse(x.nepq);
+cases.forEach(function(x, i) {
+  it('response ' + i, function(cb) {
+    n.__json = x.res;
+    n.res = { writeHead: function(){}, end: function(r) {
+      var k = JSON.parse(r);
+      assert.deepEqual(n.__json, k);
+      cb();
+    }};
+    n.parse(x.nepq);
+  });
 });
-
-assert.equal(test, 0);

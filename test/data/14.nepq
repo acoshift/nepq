@@ -1,1 +1,0 @@
-read stock.product(price: 100, $limit: 10) { name }

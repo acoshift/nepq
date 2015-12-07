@@ -1,1 +1,0 @@
-read stock.product(10, "p0", { "$w": 1 }) { price }

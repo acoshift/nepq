@@ -1,1 +1,0 @@
-delete db.user(user: "user1") { }
