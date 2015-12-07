@@ -43,7 +43,7 @@ var cases = [
     res: { ok: 1 }
   },
   {
-    nepq: 'read test.t.user() { pwd, age, address: { country }, value }',
+    nepq: 'read test.t.user() { pwd, age, address { country }, value }',
     res: {
       ok: 1,
       result: { pwd: '1234', age: 0, address: { country: 'TH' }, value: 134 }

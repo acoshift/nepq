@@ -1,6 +1,6 @@
 read user(user: "user1") {
 	id,
-	name: {
+	name {
 		first,
 		last
 	},

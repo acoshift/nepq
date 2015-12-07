@@ -41,7 +41,7 @@ null                                    return 'null';
 %%
 
 nepq
-  : id name parameters rets eof
+  : id name parameters retsOrNull eof
     {
       $$ = {
         method: $1,
@@ -68,10 +68,14 @@ namespace
     { $$ = $1; $$.push($2); }
   ;
 
-rets
+ retsOrNull
   :
     { $$ = null; }
-  | '{' '}'
+  | rets
+  ;
+
+rets
+  : '{' '}'
     { $$ = {}; }
   | '{' ret '}'
     { $$ = $2; }
@@ -86,8 +90,8 @@ ret
 retv
   : id
     { $$ = {}; $$[$1] = 1; }
-  | id ':' rets
-    { $$ = {}; $$[$1] = $3; }
+  | id rets
+    { $$ = {}; $$[$1] = $2; }
   ;
 
 parameters
