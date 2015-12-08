@@ -210,50 +210,66 @@ var nq = nepq();
  Return object if valid, otherwise null.
 
 * `nepq.parse(s: string): void`
-      Parse string into request, then call callbacks from 'on'.
+
+ Parse string into request, then call callbacks from 'on'.
 
 * `nepq.on(method: string, namespace: string, name: string, callback: (q: Request, req: http.IncomingMessage, res: http.ServerResponse, next: Function) => void): void`
-      Register callback into queue and will be call on parse.
-      If next was called, next matched callback in queue will be called.
-      method, namespace, or name can be null for matched anything.
+
+ Register callback into queue and will be call on parse.
+
+ If next was called, next matched callback in queue will be called.
+
+ method, namespace, or name can be null for matched anything.
 
 * `nepq.use(callback: (q: Request, req: http.IncomingMessage, res: http.ServerResponse, next: Function) => void): void`
-      Short version for nepq.on(null, null, null, callback).
+
+ Short version for nepq.on(null, null, null, callback).
 
 * `nepq.error(callback: (req: http.IncomingMessage, res: http.ServerResponse, next: Function) => void): void`
-      Callback will be called when parse error.
+
+ Callback will be called when parse error.
 
 * `nepq.bodyParser(): (req: http.IncomingMessage, res: http.ServerResponse, next: Function) => void`
-      Return body-parser function for "application/nepq" content-type.
-      nepq.parse will be called after get request.
+
+ Return body-parser function for "application/nepq" content-type.
+
+ nepq.parse will be called after get request.
 
 * `nepq.response(result?: any): any`
-      Traverse over result for fillter result into retrieve format.
-      Return result in retrieve format.
+
+ Traverse over result for fillter result into retrieve format.
+
+ Return result in retrieve format.
 
 * `nepq.status(statusCode?: any, statusMessage?: any): NepQ`
-      Write statusCode and statusMessage for nepq.send.
-      Return its instance (this).
+
+ Write statusCode and statusMessage for nepq.send.
+
+ Return its instance (this).
 
 * `nepq.send(result?: any): void`
-      Call nepq.response(result) and send with http.ServerResponse.
+
+ Call nepq.response(result) and send with http.ServerResponse.
 
 * `nepq.request: Request`
-      Request object from nepq.parse.
+
+ Request object from nepq.parse.
 
 * `nepq.statusCode: any`
-      Status code that will be sent with nepq.send.
+
+ Status code that will be sent with nepq.send.
 
 * `nepq.statusMessage: any`
-      Status message that will be sent with nepq.send.
+
+ Status message that will be sent with nepq.send.
 
 * `nepq.req: http.IncomingMessage`
-      Http request from body-parser.
+
+ Http request from body-parser.
 
 * `nepq.res: http.ServerResponse`
-      Http response from body-parser.
 
----
+ Http response from body-parser.
 
 ## Example
 ```js
