@@ -1,7 +1,7 @@
 {
   "name": "nepq",
   "version": "1.0.0",
-  "description": "An easy query pattern",
+  "description": "Nep Query is a query language.",
   "main": "index.js",
   "scripts": {
     "test": "gulp test"
@@ -14,7 +14,9 @@
     "database",
     "api",
     "query",
-    "json"
+    "json",
+    "language",
+    "parser"
   ],
   "author": "Thanatat Tamtan <acoshift@gmail.com>",
   "license": "MIT",
