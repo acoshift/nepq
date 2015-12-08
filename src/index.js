@@ -6,6 +6,7 @@ class NepQ {
     this.request = null;
     this._callbacks = [];
     this._callbackIndex = 0;
+    this._errorCallback = s => {};
     this.req = null;
     this.res = null;
     this.statusCode = null;
@@ -31,6 +32,9 @@ class NepQ {
       this.statusMessage = null;
       this._callbackIndex = 0;
       this._callCallback();
+    }
+    else {
+      this._errorCallback(s);
     }
   }
 
@@ -69,6 +73,10 @@ class NepQ {
     this._callbacks.push({ method: null, namespace: null, name: null, callback: callback });
   }
 
+  error(callback) {
+    this._errorCallback = callback;
+  }
+
   status(code, msg) {
     this.statusCode = (typeof code === 'undefined') ? 200 : code;
     this.statusMessage = (typeof msg === 'undefined') ? null : msg;
@@ -88,7 +96,7 @@ class NepQ {
   response(result) {
     result = (typeof result === 'undefined') ? null : result;
 
-    if (!this.request.retrieve || result === null) return result;
+    if (!this.request || !this.request.retrieve || result === null) return result;
 
     let _ = this;
 
