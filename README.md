@@ -1,82 +1,14 @@
 # Nep Query (nepq; NepQ)
 
-> Project is in development phase, anything can change anytime
-
-> **Do not** use in production
-
 [![Build Status](https://travis-ci.org/acoshift/nepq.svg?branch=master)](https://travis-ci.org/acoshift/nepq)
 [![github tag](https://img.shields.io/github/tag/acoshift/nepq.svg)]()
-[![github commit](https://img.shields.io/github/commits-since/acoshift/nepq/v0.3.3.svg)]()
+[![github commit](https://img.shields.io/github/commits-since/acoshift/nepq/v1.0.0.svg)]()
 [![npm version](https://img.shields.io/npm/v/nepq.svg)](https://www.npmjs.com/package/nepq)
 [![npm license](https://img.shields.io/npm/l/nepq.svg)]()
 
-Nep Query is an easy query pattern.
+Nep Query is a query language influenced by Facebook's GraphQL.
 
-## Usage
-```js
-var nepq = require('nepq')(),
-    express = require('express');
-
-var app = express(),
-    users = [],
-    _id = 0;
-
-nepq.on('create', '', 'user', function (q) {
-  if (!q.param.name || !q.param.pwd) {
-    nepq.response(null, 'invalid name or password!');
-    return;
-  }
-  var user = {
-    id: _id++,
-    name: q.param.name,
-    pwd: q.param.pwd
-  };
-  users.push(user);
-  nepq.response(user);
-});
-
-nepq.on('read', '', 'user', function (q) {
-  var user = users.filter(function (x) {
-    return (!q.param.id || q.param.id === x.id) &&
-           (!q.param.name || q.param.name === x.name) &&
-           (!q.param.pwd || x.pwd);
-  });
-  nepq.response(user ? user[0] : null);
-});
-
-nepq.use(function (q) {
-  nepq.response(null, 'no api');
-});
-
-app.use(nepq.bodyParser());
-
-app.listen(8000);
-```
-
-```
-$ curl localhost:8000
-> {"ok":0,"error":"no api"}
-
-$ curl --header "content-type: application/nepq" --data "create user() {}" localhost:8000
-> {"ok":0,"error":"invalid name or password!"}
-
-$ curl --header "content-type: application/nepq" --data "create user(name: \"user1\", pwd: \"1234\")" localhost:8000
-> {"ok":1,"result":{"id":0,"name":"user1","pwd":"1234"}}
-
-$ curl --header "content-type: application/nepq" --data "create user(name: \"user2\", pwd: \"6666\") { }" localhost:8000
-> {"ok":1,"result":{}}
-
-$ curl --header "content-type: application/nepq" --data "read user(name: \"user2\") { id, pwd }" localhost:8000
-> {"ok":1,"result":{"id":1,"pwd":"6666"}}
-```
-
----
-
-## Syntax
-
-The syntax of nepq is influenced by Facebook's GraphQL but not complex.
-
-### Request:
+## Request
 
 ```
 {method} {namespace}.{name}({param}) {
@@ -84,17 +16,7 @@ The syntax of nepq is influenced by Facebook's GraphQL but not complex.
 }
 ```
 
-**method**: method can be anything (ex. CRUD: create, read, update, delete).
-
-**namespace**: namespace, can be nested or empty.
-
-**name**: name of anything.
-
-**param**: parameters, can be json.
-
-**retrieve**: fields that server will include in response. If retrieve is null, server should return all fields.
-
-Request will be converted into json.
+Request will be parsed into object:
 
 ```ts
 interface Request {
@@ -106,141 +28,300 @@ interface Request {
 }
 ```
 
-#### Example:
+* **method**: method of query. (ex. create, read, update, delete)
+* **namespace**: namespace of query, can be empty and nested. (ex. db, )
+* **name**: name can be empty. (ex. user, product)
+* **param**: parameters for query. (see more in example)
+* **retrieve**: fields that want in response. (see more in example)
+
+### Example
+
+> Basic request.
 ```
-create db.user({
-  "username": "me",
-  "email": "me@email.com",
+read stock.product(id: 10) { name, price }
+```
+```js
+{
+  method: "read",
+  namespace: [ "stock" ],
+  name: "product",
+  param: {
+    id: 10
+  },
+  retrieve: {
+    name: 1,
+    price: 1
+  }
+}
+```
+---
+Use json as parameter.
+```
+create db.user.customer({
+  "user": "cust1",
+  "email": "cust1@email.com",
   "tel": "+661234567",
   "address": {
     "province": "Bangkok",
     "zip": "12345",
     "country": "TH"
   }
-}) {
-  id
-}
+}) { }
 ```
-```json
+```js
 {
-  "method": "create",
-  "namespace": [ "db" ],
-  "name": "user",
-  "param": {
-    "username": "me",
-    "email": "me@email.com",
-    "tel": "+661234567",
-    "address": {
-      "province": "Bangkok",
-      "zip": "12345",
-      "country": "TH"
+  method: "create",
+  namespace: [ "db", "user" ],
+  name: "customer",
+  param: {
+    user: "cust1",
+    email: "cust1@email.com",
+    tel: "+661234567",
+    address: {
+      province: "Bangkok",
+      zip: "12345",
+      country: "TH"
     }
   },
-  "retrieve": {
-    "id": 1
-  }
+  retrieve: { }
 }
 ```
 ---
+Nested retrieve.
 ```
-read db.user(email: "me@email.com") {
+read db.user.customer(email: "cust1@email.com") {
   id,
-  username,
+  user,
   email,
-  address: {
+  address {
     zip,
     country
   }
 }
 ```
-```json
+```js
 {
-  "method": "read",
-  "namespace": [ "db" ],
-  "name": "user",
-  "param": {
-    "email": "me@email.com"
+  method: "read",
+  namespace: [ "db", "user" ],
+  name: "customer",
+  param: {
+    email: "cust1@email.com"
   },
-  "retrieve": {
-    "id": 1,
-    "username": 1,
-    "email": 1,
-    "address": {
-      "zip": 1,
-      "country": 1
+  retrieve: {
+    id: 1,
+    user: 1,
+    email: 1,
+    address: {
+      zip: 1,
+      country: 1
     }
   }
 }
 ```
 ---
+Anonymous parameters.
 ```
-update db.user(select: {"id": 1234 }, update: {
-  "email": "me2@mail.com"
-}) { }
+update user({ id: 1234 }, { email: "new_mail@email.com" }) { }
 ```
-```json
+```js
 {
-  "method": "update",
-  "namespace": [ "db" ],
-  "name": "user",
-  "param": {
-    "select": {
-      "id": 1234
-    },
-    "update": {
-      "email": "me2@mail.com"
-    }
-  },
-  "retrieve": {
-  }
+  method: "update",
+  namespace: [ ],
+  name: "user",
+  param: [
+    { id: 1234 },
+    { email: "new_mail@email.com" }
+  ],
+  retrieve: { }
 }
 ```
 ---
+Retrieve everything.
 ```
-delete db.user(id: 1234)
+delete db.user(1234)
 ```
-```json
+```js
 {
-  "method": "delete",
-  "namespace": [ "db" ],
-  "name": "user",
-  "param": {
-    "id": 1234
-  },
-  "retrieve": null
+  method: "delete",
+  namespace: [ "db" ],
+  name: "user",
+  param: 1234,
+  retrieve: 1
 }
 ```
-
-### Response:
-
-```ts
-interface Response {
-  ok: number;
-  error?: any;
-  result?: any;
+---
+These are valid.
+```
+read
+```
+```js
+{
+  method: "read",
+  namespace: [ ],
+  name: "",
+  param: { },
+  retrieve: 1
 }
 ```
-
-For error and result, will be delete from response if null.
-
-Example:
-
-```json
+```
+read stock.product
+```
+```js
 {
-  "ok": 1,
-  "result": {
-    "id": 1234,
-    "username": "me",
-    "email": "me@email.com",
-    "address": {
-      "zip": "12345",
-      "country": "TH"
-    }
+  method: "read",
+  namespace: [ "stock" ],
+  name: "product",
+  param: { },
+  retrieve: 1
+}
+```
+```
+read stock.product { name }
+```
+```js
+{
+  method: "read",
+  namespace: [ "stock" ],
+  name: "product",
+  param: { },
+  retrieve: {
+    name: 1
   }
 }
 ```
 
 ---
 
-## API
-// TODO
+## Response
+
+Response can be anything.
+
+---
+
+## API Documentation
+
+```js
+var nepq = require('nepq')();
+// or
+var nepq = require('nepq');
+var nq = nepq();
+```
+
+* `nepq.parser.parse(s: string): Request`
+      Parse string into request object.
+      Return object if valid, otherwise null.
+
+* `nepq.parse(s: string): void`
+      Parse string into request, then call callbacks from 'on'.
+
+* `nepq.on(method: string, namespace: string, name: string, callback: (q: Request, req: http.IncomingMessage, res: http.ServerResponse, next: Function) => void): void`
+      Register callback into queue and will be call on parse.
+      If next was called, next matched callback in queue will be called.
+      method, namespace, or name can be null for matched anything.
+
+* `nepq.use(callback: (q: Request, req: http.IncomingMessage, res: http.ServerResponse, next: Function) => void): void`
+      Short version for nepq.on(null, null, null, callback).
+
+* `nepq.error(callback: (req: http.IncomingMessage, res: http.ServerResponse, next: Function) => void): void`
+      Callback will be called when parse error.
+
+* `nepq.bodyParser(): (req: http.IncomingMessage, res: http.ServerResponse, next: Function) => void`
+      Return body-parser function for "application/nepq" content-type.
+      nepq.parse will be called after get request.
+
+* `nepq.response(result?: any): any`
+      Traverse over result for fillter result into retrieve format.
+      Return result in retrieve format.
+
+* `nepq.status(statusCode?: any, statusMessage?: any): NepQ`
+      Write statusCode and statusMessage for nepq.send.
+      Return its instance (this).
+
+* `nepq.send(result?: any): void`
+      Call nepq.response(result) and send with http.ServerResponse.
+
+* `nepq.request: Request`
+      Request object from nepq.parse.
+
+* `nepq.statusCode: any`
+      Status code that will be sent with nepq.send.
+
+* `nepq.statusMessage: any`
+      Status message that will be sent with nepq.send.
+
+* `nepq.req: http.IncomingMessage`
+      Http request from body-parser.
+
+* `nepq.res: http.ServerResponse`
+      Http response from body-parser.
+
+---
+
+## Example
+```js
+var nepq = require('nepq')(),
+    express = require('express');
+
+var app = express(),
+    users = [],
+    _id = 0;
+
+nepq.on('create', '', 'user', function (q, req, res) {
+  if (!q.param.name || !q.param.pwd) {
+    res.status(400).send('invalid name or password!');
+    return;
+  }
+  var user = {
+    id: _id++,
+    name: q.param.name,
+    pwd: q.param.pwd
+  };
+  users.push(user);
+  nepq.send(user);
+});
+
+nepq.on('read', '', 'user', function(q) {
+  var user = users.filter(function(x) {
+    return (!q.param.id || q.param.id === x.id) &&
+           (!q.param.name || q.param.name === x.name) &&
+           (!q.param.pwd || q.param.pwd === x.pwd);
+  });
+  nepq.send(user ? user[0] : null);
+});
+
+nepq.use(function() {
+  nepq.status(400).send('no api');
+});
+
+nepq.error(function(req, res, next) {
+  res.status(400).send('bad request');
+});
+
+app.use(nepq.bodyParser());
+
+app.use(function(req, res) {
+  res.end('no api');
+});
+
+app.listen(8000);
+```
+
+```
+$ curl localhost:8000
+> no api
+
+$ curl --header "content-type: application/nepq" localhost:8000
+> bad request
+
+$ curl --header "content-type: application/nepq" --data "create user() {}" localhost:8000
+> invalid name or password!
+
+$ curl --header "content-type: application/nepq" --data "create user(name: \"user1\", pwd: \"1234\")" localhost:8000
+> {"id":0,"name":"user1","pwd":"1234"}
+
+$ curl --header "content-type: application/nepq" --data "create user(name: \"user2\", pwd: \"6666\") { }" localhost:8000
+> {}
+
+$ curl --header "content-type: application/nepq" --data "read user(name: \"user2\") { id, pwd }" localhost:8000
+> {"id":1,"pwd":"6666"}
+```
