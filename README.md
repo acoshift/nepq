@@ -190,13 +190,9 @@ read stock.product { name }
 }
 ```
 
----
-
 ## Response
 
 Response can be anything.
-
----
 
 ## API Documentation
 
@@ -208,8 +204,10 @@ var nq = nepq();
 ```
 
 * `nepq.parser.parse(s: string): Request`
-      Parse string into request object.
-      Return object if valid, otherwise null.
+
+ Parse string into request object.
+
+ Return object if valid, otherwise null.
 
 * `nepq.parse(s: string): void`
       Parse string into request, then call callbacks from 'on'.
