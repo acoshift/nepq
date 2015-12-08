@@ -56,9 +56,9 @@ nepq
 
 name
   :
-    { $$ = { namespace: null, name: '' }; }
+    { $$ = { namespace: [], name: '' }; }
   | id
-    { $$ = { namespace: null, name: $1 }; }
+    { $$ = { namespace: [], name: $1 }; }
   | namespace id
     { $$ = { namespace: $1, name: $2 }; }
   ;

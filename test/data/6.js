@@ -21,7 +21,7 @@ update user(user: "user1", _: {
   `,
   obj: {
     "method": "update",
-    "namespace": null,
+    "namespace": [],
     "name": "user",
     "param": {
       "user": "user1",

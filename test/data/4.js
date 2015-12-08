@@ -2,7 +2,7 @@ module.exports = {
   nepq: `read user({"user": "user1"}) { id, name, user }`,
   obj: {
     method: "read",
-    namespace: null,
+    namespace: [],
     name: "user",
     param: {
       user: "user1"
