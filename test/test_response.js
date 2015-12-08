@@ -6,11 +6,11 @@ var nepq = require('../build/'),
 var n = nepq();
 
 n.on('create', 'test', 'user', function(q) {
-  n.response(null, null);
+  n.send();
 });
 
 n.on('read', 'test.t', 'user', function(q) {
-  n.response({
+  n.send({
     user: 'user1',
     pwd: '1234',
     email: 'user1@test.com',
@@ -20,15 +20,15 @@ n.on('read', 'test.t', 'user', function(q) {
       country: function() { return 'TH'; },
       province: 'Bangkok'
     }
-  }, null);
+  });
 });
 
 n.on('delete', 'a.b.c', 'user', function(q) {
-  n.response(null, 'error');
+  n.status(500).send({});
 });
 
 n.on('read', '', 'array', function(q) {
-  n.response([
+  n.send([
     { id: 0, name: 'p0', b: false },
     { id: 1, name: 'p1', b: true },
     { id: 2, name: 'p2', b: null, k: 10 }
@@ -36,14 +36,14 @@ n.on('read', '', 'array', function(q) {
 });
 
 n.on('read', '', 'func_callback', function(q) {
-  n.response({
+  n.send({
     test1: function(q) { return 'result from return'; },
     test2: function(q, cb) { cb('result from callback'); }
   })
 });
 
 n.on('read', '', 'func_callback2', function(q) {
-  n.response({
+  n.send({
     test1: function(q) {
       return {
         a: function(q) { return 'a'; },
@@ -60,7 +60,7 @@ n.on('read', '', 'func_callback2', function(q) {
 });
 
 n.on('read', '', 'p', function(q) {
-  n.response([
+  n.send([
     { name: "p0", sub: [ { name: "p0s0" }, { name: "p0s1" }, { name: "p0s2" } ] },
     { name: "p1", sub: [ { name: "p1s0" }, { name: "p1s1" } ] },
     { name: "p2", sub: [ "p2s0", "p2s1", "p2s2" ] }
@@ -72,71 +72,67 @@ var p = n.bodyParser();
 var cases = [
   {
     nepq: 'create test.user()',
-    res: { ok: 1 }
+    res: null,
+    status: 200
   },
   {
     nepq: 'read test.t.user() { pwd, age, address { country }, value }',
-    res: {
-      ok: 1,
-      result: { pwd: '1234', age: 0, address: { country: 'TH' }, value: 134 }
-    }
+    res: { pwd: '1234', age: 0, address: { country: 'TH' }, value: 134 },
+    status: 200
   },
   {
     nepq: 'delete a.b.c.user() { }',
-    res: { ok: 0, error: 'error' }
+    res: {},
+    status: 500
   },
   {
     nepq: 'read array() { id, name }',
-    res: {
-      ok: 1,
-      result: [
-        { id: 0, name: 'p0' },
-        { id: 1, name: 'p1' },
-        { id: 2, name: 'p2' }
-      ]
-    }
+    res: [
+      { id: 0, name: 'p0' },
+      { id: 1, name: 'p1' },
+      { id: 2, name: 'p2' }
+    ],
+    status: 200
   },
   {
     nepq: 'read func_callback() { test1, test2 }',
     res: {
-      ok: 1,
-      result: {
-        test1: 'result from return',
-        test2: 'result from callback'
-      }
-    }
+      test1: 'result from return',
+      test2: 'result from callback'
+    },
+    status: 200
   },
   {
     nepq: 'read func_callback2() { test1, test2 { a } }',
     res: {
-      ok: 1,
-      result: {
-        test1: { a: 'a', b: 'b' },
-        test2: { a: 'a' }
-      }
-    }
+      test1: { a: 'a', b: 'b' },
+      test2: { a: 'a' }
+    },
+    status: 200
   },
   {
     nepq: 'read p { sub { name } }',
-    res: {
-      ok: 1,
-      result: [
-        { sub: [ { name: "p0s0" }, { name: "p0s1" }, { name: "p0s2" } ] },
-        { sub: [ { name: "p1s0" }, { name: "p1s1" } ] },
-        { }
-      ]
-    }
+    res: [
+      { sub: [ { name: "p0s0" }, { name: "p0s1" }, { name: "p0s2" } ] },
+      { sub: [ { name: "p1s0" }, { name: "p1s1" } ] },
+      { }
+    ],
+    status: 200
   }
 ];
 
 cases.forEach(function(x, i) {
   it('response ' + i, function(cb) {
-    n.__json = x.res;
-    n.res = { writeHead: function(){}, end: function(r) {
-      var k = JSON.parse(r);
-      assert.deepEqual(n.__json, k);
-      cb();
-    }};
+    n.res = {
+      writeHead: function(status) {
+        assert.equal(status, x.status);
+      },
+      end: function(r) {
+        var k = JSON.parse(r);
+        assert.deepEqual(x.res, k);
+        cb();
+      }
+    };
     n.parse(x.nepq);
   });
 });

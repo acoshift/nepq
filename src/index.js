@@ -8,6 +8,8 @@ class NepQ {
     this._callbackIndex = 0;
     this.req = null;
     this.res = null;
+    this.statusCode = null;
+    this.statusMessage = null;
   }
 
   get parser() {
@@ -25,6 +27,8 @@ class NepQ {
   parse(s) {
     this.request = this.parser.parse(s);
     if (this.request) {
+      this.statusCode = 200;
+      this.statusMessage = null;
       this._callbackIndex = 0;
       this._callCallback();
     }
@@ -65,37 +69,26 @@ class NepQ {
     this._callbacks.push({ method: null, namespace: null, name: null, callback: callback });
   }
 
-  response(result, error) {
+  status(code, msg) {
+    this.statusCode = (typeof code === 'undefined') ? 200 : code;
+    this.statusMessage = (typeof msg === 'undefined') ? null : msg;
+    return this;
+  }
+
+  send(result) {
+    result = this.response(result);
+
+    if (this.statusMessage !== null)
+      this.res.writeHead(this.statusCode, this.statusMessage, { 'Content-Type': 'application/json' });
+    else
+      this.res.writeHead(this.statusCode, { 'Content-Type': 'application/json' });
+    this.res.end(JSON.stringify(result));
+  }
+
+  response(result) {
     result = (typeof result === 'undefined') ? null : result;
-    error = (typeof error === 'undefined') ? null : error;
 
-    let done = r => {
-      if (r.error === null) delete r.error;
-      if (r.result === null) delete r.result;
-      this.res.writeHead(200, { 'Content-Type': 'application/json' });
-      this.res.end(JSON.stringify(r));
-    };
-
-    if (!result || error) {
-      done({
-        ok: error ? 0 : 1,
-        error: error || null,
-        result: null
-      });
-      return;
-    }
-
-    let r = {
-      ok: 1,
-      error: null,
-      result: {}
-    };
-
-    if (!this.request.retrieve) {
-      r.result = result;
-      done(r);
-      return;
-    }
+    if (!this.request.retrieve || result === null) return result;
 
     let _ = this;
 
@@ -130,16 +123,14 @@ class NepQ {
       });
     }
 
-    r.result = result;
-
-    if (r.result instanceof Array) {
-      r.result.forEach(map);
+    if (result instanceof Array) {
+      result.forEach(map);
     }
     else {
-      map(r.result)
+      map(result)
     }
 
-    done(r);
+    return result;
   }
 }
 
