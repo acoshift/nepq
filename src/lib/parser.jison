@@ -72,7 +72,7 @@ namespace
 
  retsOrNull
   :
-    { $$ = null; }
+    { $$ = 1; }
   | rets
   ;
 

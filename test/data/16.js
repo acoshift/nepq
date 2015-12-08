@@ -10,7 +10,7 @@ module.exports = {
       { "id": 10 },
       { "$inc": { "price": 40 } }
     ],
-    "retrieve": null
+    "retrieve": 1
   }
 }
 

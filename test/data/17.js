@@ -12,7 +12,7 @@ module.exports = {
       "$$": "123",
       "_": 1
     },
-    "retrieve": null
+    "retrieve": 1
   }
 }
 

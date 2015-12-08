@@ -7,7 +7,7 @@ module.exports = {
     ],
     "name": "product",
     "param": { },
-    "retrieve": null
+    "retrieve": 1
   }
 }
 

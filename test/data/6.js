@@ -58,6 +58,6 @@ update user(user: "user1", _: {
         }
       }
     },
-    "retrieve": null
+    "retrieve": 1
   }
 }
