@@ -11,26 +11,36 @@ declare module "nepq" {
       retrieve: any;
     }
 
-    export interface Response {
-      ok: number;
-      error?: any;
-      result?: any;
-    }
-
     export class NepQ {
-      private data: Request;
-      private retrieve;
+      request: Request;
+      req: any;
+      res: any;
+      next: Function;
+      statusCode: any;
+      statusMessage: any;
+
+      parser: {
+        parse(s: string)
+      };
 
       constructor();
 
-      parse(data: string): void;
+      parse(s: string): void;
 
       bodyParser(): (req, res, next: Function) => void;
 
       on(method: string, namespace: string, name: string,
         callback: (q: Request, req, res, next: Function) => void): void;
 
-      response(result?: any, error?: any): Response;
+      use(callback: (q: Request, req, res, next: Function) => void): void;
+
+      error(callback: (req, res, next: Function) => void): void;
+
+      status(code?, msg?);
+
+      send(result?): void;
+
+      response(result?): void;
     }
   }
   export = n;
