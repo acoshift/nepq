@@ -108,11 +108,11 @@ class NepQ {
     }
 
     function map(r) {
-      traverse(r).forEach(function(x) {
+      return traverse(r).forEach(function(x) {
         if (typeof x === 'function') {
           this.update(getResult(x));
         }
-        let p = this.path;
+        let p = this.path.filter(isNaN);
         let k = traverse(_.request.retrieve).get(p);
         if (typeof k === 'undefined') {
           while (p.length > 0) {
@@ -124,15 +124,16 @@ class NepQ {
         else if (k === 0) {
           this.remove();
         }
+        else if (k instanceof Object && !(x instanceof Object)) {
+          this.parent.remove();
+        }
       });
     }
 
     r.result = result;
 
     if (r.result instanceof Array) {
-      r.result.forEach(function(x) {
-        map(x);
-      });
+      r.result.forEach(map);
     }
     else {
       map(r.result)

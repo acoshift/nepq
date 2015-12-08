@@ -59,6 +59,14 @@ n.on('read', '', 'func_callback2', function(q) {
   })
 });
 
+n.on('read', '', 'p', function(q) {
+  n.response([
+    { name: "p0", sub: [ { name: "p0s0" }, { name: "p0s1" }, { name: "p0s2" } ] },
+    { name: "p1", sub: [ { name: "p1s0" }, { name: "p1s1" } ] },
+    { name: "p2", sub: [ "p2s0", "p2s1", "p2s2" ] }
+  ]);
+});
+
 var p = n.bodyParser();
 
 var cases = [
@@ -106,6 +114,17 @@ var cases = [
         test1: { a: 'a', b: 'b' },
         test2: { a: 'a' }
       }
+    }
+  },
+  {
+    nepq: 'read p { sub { name } }',
+    res: {
+      ok: 1,
+      result: [
+        { sub: [ { name: "p0s0" }, { name: "p0s1" }, { name: "p0s2" } ] },
+        { sub: [ { name: "p1s0" }, { name: "p1s1" } ] },
+        { }
+      ]
     }
   }
 ];
