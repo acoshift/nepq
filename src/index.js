@@ -6,9 +6,10 @@ class NepQ {
     this.request = null;
     this._callbacks = [];
     this._callbackIndex = 0;
-    this._errorCallback = s => {};
+    this._errorCallback = () => {};
     this.req = null;
     this.res = null;
+    this.next = () => {};
     this.statusCode = null;
     this.statusMessage = null;
   }
@@ -34,7 +35,7 @@ class NepQ {
       this._callCallback();
     }
     else {
-      this._errorCallback(s);
+      this._errorCallback(this.req, this.res, this.next);
     }
   }
 
@@ -42,6 +43,7 @@ class NepQ {
     return (req, res, next) => {
       this.req = req;
       this.res = res;
+      this.next = next;
 
       if (req.headers['content-type'] !== 'application/nepq') { next(); return; }
 
@@ -96,7 +98,9 @@ class NepQ {
   response(result) {
     result = (typeof result === 'undefined') ? null : result;
 
-    if (!this.request || !this.request.retrieve || result === null) return result;
+    if (!this.request || this.request.retrieve === 1 || result === null) return result;
+
+    result = Object.assign({}, result);
 
     let _ = this;
 
