@@ -33,8 +33,7 @@ class NepQ {
       this.statusMessage = null;
       this._callbackIndex = 0;
       this._callCallback();
-    }
-    else {
+    } else {
       this._errorCallback(this.req, this.res, this.next);
     }
   }
@@ -45,7 +44,7 @@ class NepQ {
       this.res = res;
       this.next = next;
 
-      if (req.headers['content-type'] !== 'application/nepq') { next(); return; }
+      if (req.headers['content-type'] !== 'application/nepq') return next();
 
       let data = '';
       req.setEncoding('utf8');
@@ -59,9 +58,9 @@ class NepQ {
     if (c) {
       let d = this.request;
       let ns = d.namespace ? d.namespace.join('.') : '';
-      if (c.method !== null && c.method !== d.method) { this._callCallback(); return; }
-      if (c.namespace !== null && c.namespace !== ns) { this._callCallback(); return; }
-      if (c.name !== null && c.name !== d.name) { this._callCallback(); return; }
+      if (c.method !== null && c.method !== d.method) return this._callCallback();
+      if (c.namespace !== null && c.namespace !== ns) return this._callCallback();
+      if (c.name !== null && c.name !== d.name) return this._callCallback();
 
       c.callback(d, this.req, this.res, this._callCallback);
     }
@@ -88,10 +87,11 @@ class NepQ {
   send(result) {
     result = this.response(result);
 
-    if (this.statusMessage !== null)
+    if (this.statusMessage !== null) {
       this.res.writeHead(this.statusCode, this.statusMessage, { 'Content-Type': 'application/json' });
-    else
+    } else {
       this.res.writeHead(this.statusCode, { 'Content-Type': 'application/json' });
+    }
     this.res.end(JSON.stringify(result));
   }
 
@@ -114,22 +114,24 @@ class NepQ {
 
     function map(r) {
       traverse(r).forEach(function(x) {
-        if (typeof x === 'function') {
-          this.update(getResult(x));
-        }
+        if (!traverse(r).has(this.path)) return;
         let p = this.path.filter(isNaN);
         let k = traverse(_.request.retrieve).get(p);
-        if (typeof k === 'undefined' && traverse(r).has(this.path)) {
+        let v = (() => {
           while (p.length > 0) {
-            if (traverse(_.request.retrieve).get(p) === 1) return;
+            if (traverse(_.request.retrieve).get(p) === 1) return true;
             p.pop();
           }
+          return false;
+        })();
+        if ((v || k instanceof Object) && typeof x === 'function') {
+          this.update(getResult(x));
+        } else if (typeof k === 'undefined') {
+          if (v) return;
           this.remove();
-        }
-        else if (k === 0) {
+        } else if (k === 0) {
           this.remove();
-        }
-        else if (k instanceof Object && !(x instanceof Object)) {
+        } else if (k instanceof Object && !(x instanceof Object)) {
           this.parent.remove();
         }
       });
@@ -137,8 +139,7 @@ class NepQ {
 
     if (result instanceof Array) {
       result.forEach(map);
-    }
-    else {
+    } else {
       map(result)
     }
 
