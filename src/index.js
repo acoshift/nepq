@@ -119,7 +119,7 @@ class NepQ {
         }
         let p = this.path.filter(isNaN);
         let k = traverse(_.request.retrieve).get(p);
-        if (typeof k === 'undefined') {
+        if (typeof k === 'undefined' && traverse(r).has(this.path)) {
           while (p.length > 0) {
             if (traverse(_.request.retrieve).get(p) === 1) return;
             p.pop();
