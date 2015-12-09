@@ -113,7 +113,7 @@ class NepQ {
     }
 
     function map(r) {
-      return traverse(r).forEach(function(x) {
+      traverse(r).forEach(function(x) {
         if (typeof x === 'function') {
           this.update(getResult(x));
         }
