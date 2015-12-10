@@ -126,8 +126,7 @@ var cases = [
     nepq: 'read p { sub { name } }',
     res: [
       { sub: [ { name: "p0s0" }, { name: "p0s1" }, { name: "p0s2" } ] },
-      { sub: [ { name: "p1s0" }, { name: "p1s1" } ] },
-      { }
+      { sub: [ { name: "p1s0" }, { name: "p1s1" } ] }
     ],
     status: 200
   },

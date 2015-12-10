@@ -144,7 +144,7 @@ class NepQ {
     };
 
     if (_.isArray(result)) {
-      result.forEach((x, i, a) => a[i] = pick(x));
+      result = result.map(pick).filter(x => !_.isEmpty(x));
     } else {
       result = pick(result);
     }
