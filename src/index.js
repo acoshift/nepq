@@ -132,7 +132,11 @@ class NepQ {
         } else if (k === 0) {
           this.remove();
         } else if (k instanceof Object && !(x instanceof Object)) {
-          this.parent.remove();
+          if (this.parent.node instanceof Array) {
+            this.parent.remove();
+          } else {
+            this.remove();
+          }
         }
       });
     }

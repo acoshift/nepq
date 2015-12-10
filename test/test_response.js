@@ -67,6 +67,12 @@ n.on('read', '', 'p', function(q) {
   ]);
 });
 
+n.on('read', '', 'test_retrieve_sub_field_from_value', function(q) {
+  n.send({
+    name: "test"
+  });
+});
+
 var p = n.bodyParser();
 
 var cases = [
@@ -117,6 +123,11 @@ var cases = [
       { sub: [ { name: "p1s0" }, { name: "p1s1" } ] },
       { }
     ],
+    status: 200
+  },
+  {
+    nepq: 'read test_retrieve_sub_field_from_value { name { id } }',
+    res: {},
     status: 200
   }
 ];
