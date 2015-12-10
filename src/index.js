@@ -1,5 +1,5 @@
 import parser from './lib/parser';
-import traverse from 'traverse';
+import _ from 'lodash';
 
 class NepQ {
   constructor() {
@@ -100,51 +100,53 @@ class NepQ {
 
     if (!this.request || this.request.retrieve === 1 || result === null) return result;
 
-    result = Object.assign({}, result);
-
-    let _ = this;
-
-    function getResult(f) {
+    let callFunc = f => {
       let r, t;
-      r = f(_.request, p => {
+      r = f(this.request, p => {
         t = p;
       });
       return typeof t !== 'undefined' ? t : r;
     }
 
-    function map(r) {
-      traverse(r).forEach(function(x) {
-        if (!traverse(r).has(this.path)) return;
-        let p = this.path.filter(isNaN);
-        let k = traverse(_.request.retrieve).get(p);
-        let v = (() => {
-          while (p.length > 0) {
-            if (traverse(_.request.retrieve).get(p) === 1) return true;
-            p.pop();
+    let pick = (r) => {
+      let result = {};
+      let expand = (r) => {
+        return _.transform(r, (r, v, k) => {
+          if (_.isFunction(v)) {
+            v = callFunc(v);
           }
-          return false;
-        })();
-        if ((v || k instanceof Object) && typeof x === 'function') {
-          this.update(getResult(x));
-        } else if (typeof k === 'undefined') {
-          if (v) return;
-          this.remove();
-        } else if (k === 0) {
-          this.remove();
-        } else if (k instanceof Object && !(x instanceof Object)) {
-          if (this.parent.node instanceof Array) {
-            this.parent.remove();
-          } else {
-            this.remove();
+          if (_.isArray(v)) expand(v);
+          if (_.isObject(v)) expand(v);
+          r[k] = v;
+        });
+      }
+      let rec = (r, path) => {
+        _.forOwn(r, (v, k) => {
+          let p = path.slice();
+          p.push(k);
+          let j = p.filter(isNaN).join('.');
+          let l = _.get(this.request.retrieve, j);
+          if (l === undefined) return;
+          if (_.isFunction(v)) {
+            v = callFunc(v);
           }
-        }
-      });
-    }
+          if (l !== 1) {
+            if (_.isArray(v)) return rec(v, p);
+            if (_.isObject(v)) return rec(v, p);
+            return;
+          }
+          if (_.isObject(v)) v = expand(v);
+          _.set(result, p.join('.'), v);
+        });
+      };
+      rec(r, []);
+      return result;
+    };
 
-    if (result instanceof Array) {
-      result.forEach(map);
+    if (_.isArray(result)) {
+      result.forEach((x, i, a) => a[i] = pick(x));
     } else {
-      map(result);
+      result = pick(result);
     }
 
     return result;

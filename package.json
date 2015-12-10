@@ -1,6 +1,6 @@
 {
   "name": "nepq",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Nep Query is a query language.",
   "main": "index.js",
   "scripts": {
@@ -35,6 +35,6 @@
     "mocha": "^2.3.4"
   },
   "dependencies": {
-    "traverse": "^0.6.6"
+    "lodash": "^3.10.1"
   }
 }

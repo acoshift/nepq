@@ -73,6 +73,12 @@ n.on('read', '', 'test_retrieve_sub_field_from_value', function(q) {
   });
 });
 
+n.on('read', '', 'test_result_is_nested_array', function(q) {
+  n.send([
+    { id: [ { a: 10, b: 12 }, { a: 5 } ] }
+  ]);
+});
+
 var p = n.bodyParser();
 
 var cases = [
@@ -128,6 +134,13 @@ var cases = [
   {
     nepq: 'read test_retrieve_sub_field_from_value { name { id } }',
     res: {},
+    status: 200
+  },
+  {
+    nepq: 'read test_result_is_nested_array { id }',
+    res: [
+      { id: [ { a: 10, b: 12 }, { a: 5 } ] }
+    ],
     status: 200
   }
 ];
