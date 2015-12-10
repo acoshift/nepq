@@ -144,7 +144,7 @@ class NepQ {
     if (result instanceof Array) {
       result.forEach(map);
     } else {
-      map(result)
+      map(result);
     }
 
     return result;
