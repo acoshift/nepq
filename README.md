@@ -226,6 +226,16 @@ var nq = nepq();              // : Nq
 
 `class NepQ`
 
+* `method: string`
+
+* `namespace: string[]`
+
+* `name: string`
+
+* `param: any`
+
+* `retrieve: any`
+
 * `response(result?: any): any`
 
  Fillter result into retrieve format.
