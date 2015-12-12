@@ -4,7 +4,6 @@
         "module": "commonjs",
         "moduleResolution": "node",
         "isolatedModules": false,
-        "jsx": "react",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "declaration": false,
@@ -25,11 +24,6 @@
     "files": [
         "src/nepq.d.ts"
     ],
-    "formatCodeOptions": {
-        "indentSize": 2,
-        "tabSize": 2,
-        "convertTabsToSpaces": true
-    },
     "compileOnSave": false,
     "buildOnSave": false,
     "atom": {

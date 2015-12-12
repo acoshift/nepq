@@ -6,7 +6,7 @@
 
 Nep Query is a query language influenced by Facebook's GraphQL.
 
-## Request
+## Syntax
 
 ```
 {method} {namespace}.{name}({param}) {
@@ -14,23 +14,17 @@ Nep Query is a query language influenced by Facebook's GraphQL.
 }
 ```
 
-Request will be parsed into object:
+will be parsed into object:
 
 ```ts
-interface Request {
-  method: string;
-  namespace: string[];
-  name: string;
-  param: any;
-  retrieve: any;
+interface NepQ {
+  method: string;         // not null, not empty
+  namespace: string[];    // can be empty array
+  name: string;           // not null, can be empty string
+  param: any;             // can be null, empty array, or empty object
+  retrieve: any;          // not null
 }
 ```
-
-* **method**: method of query. (ex. create, read, update, delete)
-* **namespace**: namespace of query, can be empty and nested. (ex. db, )
-* **name**: name can be empty. (ex. user, product)
-* **param**: parameters for query. (see more in example)
-* **retrieve**: fields that want in response. (see more in example)
 
 ### Example
 
@@ -188,86 +182,55 @@ read stock.product { name }
 }
 ```
 
-## Response
-
-Response can be anything.
-
-## API Documentation
+## API Document
 
 ```js
-var nepq = require('nepq')();
+var nepq = require('nepq')(); // : Nq
 // or
-var nepq = require('nepq');
-var nq = nepq();
+var nepq = require('nepq');   // : Function(): Nq
+var nq = nepq();              // : Nq
 ```
 
-* `nepq.parser.parse(s: string): Request`
+`class Nq`
+* `parser.parse(s: string): NepQ`
 
  Parse string into request object.
 
  Return object if valid, otherwise null.
 
-* `nepq.parse(s: string): void`
+* `parse(s: string, ...args): void`
 
  Parse string into request, then call callbacks from 'on'.
 
-* `nepq.on(method: string, namespace: string, name: string, callback: (q: Request, req: http.IncomingMessage, res: http.ServerResponse, next: Function) => void): void`
+* `on(method: string, namespace: string, name: string, callback: (q: NepQ, ...args, next: Function) => void): void`
 
- Register callback into queue and will be call on parse.
+ Register callback into queue and will be called on parse.
 
  If next was called, next matched callback in queue will be called.
 
  method, namespace, or name can be null for matched anything.
 
-* `nepq.use(callback: (q: Request, req: http.IncomingMessage, res: http.ServerResponse, next: Function) => void): void`
+* `use(callback: (q: NepQ, ...args, next: Function) => void): void`
 
  Short version for nepq.on(null, null, null, callback).
 
-* `nepq.error(callback: (req: http.IncomingMessage, res: http.ServerResponse, next: Function) => void): void`
+* `error(callback: (...args) => void): void`
 
  Callback will be called when parse error.
 
-* `nepq.bodyParser(): (req: http.IncomingMessage, res: http.ServerResponse, next: Function) => void`
+* `bodyParser(): (req: http.IncomingMessage, res: http.ServerResponse, next: Function) => void`
 
  Return body-parser function for "application/nepq" content-type.
 
  nepq.parse will be called after get request.
 
-* `nepq.response(result?: any): any`
+`class NepQ`
 
- Traverse over result for fillter result into retrieve format.
+* `response(result?: any): any`
+
+ Fillter result into retrieve format.
 
  Return result in retrieve format.
-
-* `nepq.status(statusCode?: any, statusMessage?: any): NepQ`
-
- Write statusCode and statusMessage for nepq.send.
-
- Return its instance (this).
-
-* `nepq.send(result?: any): void`
-
- Call nepq.response(result) and send with http.ServerResponse.
-
-* `nepq.request: Request`
-
- Request object from nepq.parse.
-
-* `nepq.statusCode: any`
-
- Status code that will be sent with nepq.send.
-
-* `nepq.statusMessage: any`
-
- Status message that will be sent with nepq.send.
-
-* `nepq.req: http.IncomingMessage`
-
- Http request from body-parser.
-
-* `nepq.res: http.ServerResponse`
-
- Http response from body-parser.
 
 ## Example
 ```js
@@ -278,7 +241,7 @@ var app = express(),
     users = [],
     _id = 0;
 
-nepq.on('create', '', 'user', function (q, req, res) {
+nepq.on('create', '', 'user', function (q, req, res, next) {
   if (!q.param.name || !q.param.pwd) {
     res.status(400).send('invalid name or password!');
     return;
@@ -289,20 +252,20 @@ nepq.on('create', '', 'user', function (q, req, res) {
     pwd: q.param.pwd
   };
   users.push(user);
-  nepq.send(user);
+  res.json(q.response(user));
 });
 
-nepq.on('read', '', 'user', function(q) {
+nepq.on('read', '', 'user', function(q, req, res, next) {
   var user = users.filter(function(x) {
     return (!q.param.id || q.param.id === x.id) &&
            (!q.param.name || q.param.name === x.name) &&
            (!q.param.pwd || q.param.pwd === x.pwd);
   });
-  nepq.send(user ? user[0] : null);
+  res.json(q.response(user ? user[0] : null));
 });
 
-nepq.use(function() {
-  nepq.status(400).send('no api');
+nepq.use(function(q, req, res, next) {
+  res.status(400).send('no api');
 });
 
 nepq.error(function(req, res, next) {
