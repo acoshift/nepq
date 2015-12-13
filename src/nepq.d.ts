@@ -1,4 +1,4 @@
-declare module nepq {
+declare module "nepq" {
   interface NepQ {
     method: string;
     namespace: string[];
@@ -10,7 +10,10 @@ declare module nepq {
   }
 
   class Nq {
-    parser: { parse(s: string) };
+    parser(): {
+      parse(s: string),
+      on(event: string, handler: Function)
+    };
 
     constructor();
 

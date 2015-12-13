@@ -198,6 +198,16 @@ var nq = nepq();              // : Nq
 
  Return object if valid, otherwise null.
 
+* `parser.on(event: string, handler: Function)`
+
+  * `parser.on('before', (s: string) => string): void`
+
+    Before parse event.
+
+  * `parser.on('after', (q: NepQ) => void: void`
+
+    After parsed event.
+
 * `parse(s: string, ...args): void`
 
  Parse string into request, then call callbacks from 'on'.

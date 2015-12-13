@@ -68,16 +68,23 @@ class Nq {
   constructor() {
     this._callbacks = [];
     this._errorCallback = () => {};
+    this._parserEvent = {};
   }
 
   get parser() {
+    let _this = this;
     return {
       parse(s) {
+        if (_this._parserEvent['before']) s = _this._parserEvent['before'](s);
         let r = null;
         try {
           r = new NepQ(parser.parse(s));
+          if (_this._parserEvent['after']) _this._parserEvent['after'](r);
         } catch (e) { }
         return r;
+      },
+      on(event, handler) {
+        _this._parserEvent[event] = handler;
       }
     };
   }
