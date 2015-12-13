@@ -80,7 +80,9 @@ class Nq {
         try {
           r = new NepQ(parser.parse(s));
           if (_this._parserEvent['after']) _this._parserEvent['after'](r);
-        } catch (e) { }
+        } catch (e) {
+          if (_this._parserEvent['error']) return _this._parserEvent['error'](e, s) || null;
+        }
         return r;
       },
       on(event, handler) {

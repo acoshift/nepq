@@ -208,6 +208,10 @@ var nq = nepq();              // : Nq
 
     After parsed event.
 
+  * `parser.on('error', (err: Error, s: string) => NepQ): void`
+
+    On parse error, can fix result here, return null or undefined will call nepq.error.
+
 * `parse(s: string, ...args): void`
 
  Parse string into request, then call callbacks from 'on'.
