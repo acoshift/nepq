@@ -45,29 +45,18 @@ nepq
     {
       $$ = {
         method: $1,
-        namespace: $2.namespace,
-        name: $2.name,
-        param: $3,
-        retrieve: $4
+        name: $2,
+        params: $3,
+        retrieves: $4
       }
       return $$;
     }
   ;
 
 name
-  :
-    { $$ = { namespace: [], name: '' }; }
-  | id
-    { $$ = { namespace: [], name: $1 }; }
-  | namespace id
-    { $$ = { namespace: $1, name: $2 }; }
-  ;
-
-namespace
-  : id '.'
-    { $$ = [ $1 ]; }
-  | namespace id '.'
-    { $$ = $1; $$.push($2); }
+  : id
+  | name . id
+    { $$ = $1 + $2 + $3; }
   ;
 
  retsOrNull

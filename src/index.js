@@ -17,7 +17,7 @@ class NepQ {
         t = p;
       });
       return typeof t !== 'undefined' ? t : r;
-    }
+    };
 
     let pick = (r) => {
       let result = {};
@@ -30,7 +30,7 @@ class NepQ {
           if (_.isObject(v)) expand(v);
           r[k] = v;
         });
-      }
+      };
       let rec = (r, path) => {
         _.forOwn(r, (v, k) => {
           let p = path.slice();
@@ -75,13 +75,13 @@ class Nq {
     let _this = this;
     return {
       parse(s) {
-        if (_this._parserEvent['before']) s = _this._parserEvent['before'](s);
+        if (_this._parserEvent.before) s = _this._parserEvent.before(s);
         let r = null;
         try {
           r = new NepQ(parser.parse(s));
-          if (_this._parserEvent['after']) _this._parserEvent['after'](r);
+          if (_this._parserEvent.after) _this._parserEvent.after(r);
         } catch (e) {
-          if (_this._parserEvent['error']) return _this._parserEvent['error'](e, s) || null;
+          if (_this._parserEvent.error) return _this._parserEvent.error(e, s) || null;
         }
         return r;
       },
