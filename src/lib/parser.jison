@@ -54,8 +54,10 @@ nepq
   ;
 
 name
-  : id
-  | name . id
+  :
+    { $$ = ''; }
+  | id
+  | name '.' id
     { $$ = $1 + $2 + $3; }
   ;
 

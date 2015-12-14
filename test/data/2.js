@@ -2,14 +2,13 @@ module.exports = {
   nepq: `create user(username: "user1", password: "1234") { id }`,
   obj: {
     method: "create",
-    namespace: [],
     name: "user",
-    param: {
+    params: {
       username: "user1",
       password: "1234"
     },
-    retrieve: {
+    retrieves: {
       id: 1
     }
   }
-}
+};

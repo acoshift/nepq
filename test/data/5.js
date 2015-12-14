@@ -11,12 +11,11 @@ read user(user: "user1") {
   `,
   obj: {
     method: "read",
-    namespace: [],
     name: "user",
-    param: {
+    params: {
       user: "user1"
     },
-    retrieve: {
+    retrieves: {
       id: 1,
       name: {
         first: 1,
@@ -25,4 +24,4 @@ read user(user: "user1") {
 		  user: 1
     }
   }
-}
+};

@@ -2,15 +2,14 @@ module.exports = {
   nepq: `read user(user: "user1") { id, name, user }`,
   obj: {
     method: "read",
-    namespace: [],
     name: "user",
-    param: {
+    params: {
       user: "user1"
     },
-    retrieve: {
+    retrieves: {
       id: 1,
       name: 1,
       user: 1
     }
   }
-}
+};

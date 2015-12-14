@@ -20,16 +20,15 @@ update user(user: "user1", _: {
 })
   `,
   obj: {
-    "method": "update",
-    "namespace": [],
-    "name": "user",
-    "param": {
-      "user": "user1",
-      "_": {
-        "password": "new_password",
-        "enabled": false,
-        "age": 3,
-        "array": [
+    method: "update",
+    name: "user",
+    params: {
+      user: "user1",
+      _: {
+        password: "new_password",
+        enabled: false,
+        age: 3,
+        array: [
           "e1",
           "e2",
           4,
@@ -38,19 +37,19 @@ update user(user: "user1", _: {
           true,
           null
         ],
-        "mynull": null,
-        "sub": {
-          "a": 1,
-          "sub": {
-            "sub": {
-              "a": [
+        mynull: null,
+        sub: {
+          a: 1,
+          sub: {
+            sub: {
+              a: [
                 {
-                  "b": 1,
-                  "c": 4
+                  b: 1,
+                  c: 4
                 },
                 {
-                  "b": 2,
-                  "c": 1
+                  b: 2,
+                  c: 1
                 }
               ]
             }
@@ -58,6 +57,6 @@ update user(user: "user1", _: {
         }
       }
     },
-    "retrieve": 1
+    retrieves: 1
   }
-}
+};
