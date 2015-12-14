@@ -119,7 +119,7 @@ class Nq {
       if (c.method !== null && c.method !== d.method) return this._callCallback.apply(this, [i, t].concat(args));
       if (c.name !== null && c.name !== d.name) return this._callCallback.apply(this, [i, t].concat(args));
 
-      c.callback.apply(this, [d, t].concat(args).concat(() => this._callCallback(this, [i, t].concat(args))));
+      c.callback.apply(this, [d, t].concat(args).concat(() => this._callCallback.apply(this, [i, t].concat(args))));
     }
   }
 
