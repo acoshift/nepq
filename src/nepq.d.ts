@@ -1,10 +1,9 @@
 declare module "nepq" {
   interface NepQ {
     method: string;
-    namespace: string[];
     name: string;
-    param: any;
-    retrieve: any;
+    params: any;
+    retrieves: any;
 
     response(result?): any;
   }
@@ -21,8 +20,7 @@ declare module "nepq" {
 
     bodyParser(): (req, res, next: Function) => void;
 
-    on(method: string, namespace: string, name: string,
-      callback: (q: NepQ, ...args) => void): void;
+    on(method: string, name: string, callback: (q: NepQ, ...args) => void): void;
 
     use(callback: (q: NepQ, ...args) => void): void;
 

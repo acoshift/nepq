@@ -9,7 +9,7 @@ class NepQ {
   response(result) {
     result = (typeof result === 'undefined') ? null : result;
 
-    if (this.retrieve === 1 || result === null) return result;
+    if (this.retrieves === 1 || result === null) return result;
 
     let callFunc = f => {
       let r, t;
@@ -36,7 +36,7 @@ class NepQ {
           let p = path.slice();
           p.push(k);
           let j = p.filter(isNaN).join('.');
-          let l = _.get(this.retrieve, j);
+          let l = _.get(this.retrieves, j);
           if (l === undefined) return;
           if (_.isFunction(v)) {
             v = callFunc(v);
@@ -116,21 +116,19 @@ class Nq {
     let c = this._callbacks[i++];
     if (c) {
       let d = t.body;
-      let ns = d.namespace ? d.namespace.join('.') : '';
       if (c.method !== null && c.method !== d.method) return this._callCallback.apply(this, [i, t].concat(args));
-      if (c.namespace !== null && c.namespace !== ns) return this._callCallback.apply(this, [i, t].concat(args));
       if (c.name !== null && c.name !== d.name) return this._callCallback.apply(this, [i, t].concat(args));
 
       c.callback.apply(this, [d, t].concat(args).concat(() => this._callCallback(this, [i, t].concat(args))));
     }
   }
 
-  on(method, namespace, name, callback) {
-    this._callbacks.push({ method: method, namespace: namespace, name: name, callback: callback });
+  on(method, name, callback) {
+    this._callbacks.push({ method: method, name: name, callback: callback });
   }
 
   use(callback) {
-    this._callbacks.push({ method: null, namespace: null, name: null, callback: callback });
+    this._callbacks.push({ method: null, name: null, callback: callback });
   }
 
   error(callback) {

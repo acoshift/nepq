@@ -5,11 +5,11 @@ var nepq = require('../build/'),
 
 var n = nepq();
 
-n.on('create', 'test', 'user', function(q, t) {
+n.on('create', 'test.user', function(q, t) {
   t(q.response());
 });
 
-n.on('read', 'test.t', 'user', function(q, t) {
+n.on('read', 'test.t.user', function(q, t) {
   t(q.response({
     user: 'user1',
     pwd: '1234',
@@ -23,11 +23,11 @@ n.on('read', 'test.t', 'user', function(q, t) {
   }));
 });
 
-n.on('delete', 'a.b.c', 'user', function(q, t) {
+n.on('delete', 'a.b.c.user', function(q, t) {
   t(q.response({}));
 });
 
-n.on('read', '', 'array', function(q, t) {
+n.on('read', 'array', function(q, t) {
   t(q.response([
     { id: 0, name: 'p0', b: false },
     { id: 1, name: 'p1', b: true },
@@ -35,14 +35,14 @@ n.on('read', '', 'array', function(q, t) {
   ]));
 });
 
-n.on('read', '', 'func_callback', function(q, t) {
+n.on('read', 'func_callback', function(q, t) {
   t(q.response({
     test1: function(q) { return 'result from return'; },
     test2: function(q, cb) { cb('result from callback'); }
   }));
 });
 
-n.on('read', '', 'func_callback2', function(q, t) {
+n.on('read', 'func_callback2', function(q, t) {
   t(q.response({
     test1: function(q) {
       return {
@@ -59,7 +59,7 @@ n.on('read', '', 'func_callback2', function(q, t) {
   }));
 });
 
-n.on('read', '', 'p', function(q, t) {
+n.on('read', 'p', function(q, t) {
   t(q.response([
     { name: "p0", sub: [ { name: "p0s0" }, { name: "p0s1" }, { name: "p0s2" } ] },
     { name: "p1", sub: [ { name: "p1s0" }, { name: "p1s1" } ] },
@@ -67,13 +67,13 @@ n.on('read', '', 'p', function(q, t) {
   ]));
 });
 
-n.on('read', '', 'test_retrieve_sub_field_from_value', function(q, t) {
+n.on('read', 'test_retrieve_sub_field_from_value', function(q, t) {
   t(q.response({
     name: "test"
   }));
 });
 
-n.on('read', '', 'test_result_is_nested_array', function(q, t) {
+n.on('read', 'test_result_is_nested_array', function(q, t) {
   t(q.response([
     { id: [ { a: 10, b: 12 }, { a: 5 } ] }
   ]));
