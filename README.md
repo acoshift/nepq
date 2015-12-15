@@ -9,8 +9,8 @@ Nep Query is a query language influenced by Facebook's GraphQL.
 ## Syntax
 
 ```
-{method} {namespace}.{name}({param}) {
-  {retrieve}
+{method} {name}({params}) {
+  {retrieves}
 }
 ```
 
@@ -19,10 +19,9 @@ will be parsed into object:
 ```ts
 interface NepQ {
   method: string;         // not null, not empty
-  namespace: string[];    // can be empty array
-  name: string;           // not null, can be empty string
-  param: any;             // can be null, empty array, or empty object
-  retrieve: any;          // not null
+  name: string;           // not null, can be empty string, can include '.'
+  params: any;            // can be null, empty array, or empty object
+  retrieves: any;         // not null
 }
 ```
 
@@ -35,12 +34,11 @@ read stock.product(id: 10) { name, price }
 ```js
 {
   method: "read",
-  namespace: [ "stock" ],
-  name: "product",
-  param: {
+  name: "stock.product",
+  params: {
     id: 10
   },
-  retrieve: {
+  retrieves: {
     name: 1,
     price: 1
   }
@@ -63,9 +61,8 @@ create db.user.customer({
 ```js
 {
   method: "create",
-  namespace: [ "db", "user" ],
-  name: "customer",
-  param: {
+  name: "db.user.customer",
+  params: {
     user: "cust1",
     email: "cust1@email.com",
     tel: "+661234567",
@@ -75,7 +72,7 @@ create db.user.customer({
       country: "TH"
     }
   },
-  retrieve: { }
+  retrieves: { }
 }
 ```
 ---
@@ -94,12 +91,11 @@ read db.user.customer(email: "cust1@email.com") {
 ```js
 {
   method: "read",
-  namespace: [ "db", "user" ],
-  name: "customer",
-  param: {
+  name: "db.user.customer",
+  params: {
     email: "cust1@email.com"
   },
-  retrieve: {
+  retrieves: {
     id: 1,
     user: 1,
     email: 1,
@@ -118,13 +114,12 @@ update user({ id: 1234 }, { email: "new_mail@email.com" }) { }
 ```js
 {
   method: "update",
-  namespace: [ ],
   name: "user",
-  param: [
+  params: [
     { id: 1234 },
     { email: "new_mail@email.com" }
   ],
-  retrieve: { }
+  retrieves: { }
 }
 ```
 ---
@@ -135,10 +130,9 @@ delete db.user(1234)
 ```js
 {
   method: "delete",
-  namespace: [ "db" ],
-  name: "user",
-  param: 1234,
-  retrieve: 1
+  name: "db.user",
+  params: 1234,
+  retrieves: 1
 }
 ```
 ---
@@ -149,10 +143,9 @@ read
 ```js
 {
   method: "read",
-  namespace: [ ],
   name: "",
-  param: { },
-  retrieve: 1
+  params: { },
+  retrieves: 1
 }
 ```
 ```
@@ -161,10 +154,9 @@ read stock.product
 ```js
 {
   method: "read",
-  namespace: [ "stock" ],
-  name: "product",
-  param: { },
-  retrieve: 1
+  name: "stock.product",
+  params: { },
+  retrieves: 1
 }
 ```
 ```
@@ -173,10 +165,9 @@ read stock.product { name }
 ```js
 {
   method: "read",
-  namespace: [ "stock" ],
-  name: "product",
-  param: { },
-  retrieve: {
+  name: "stock.product",
+  params: { },
+  retrieves: {
     name: 1
   }
 }
@@ -216,7 +207,7 @@ var nq = nepq();              // : Nq
 
  Parse string into request, then call callbacks from 'on'.
 
-* `on(method: string, namespace: string, name: string, callback: (q: NepQ, ...args, next: Function) => void): void`
+* `on(method: string, name: string, callback: (q: NepQ, ...args, next: Function) => void): void`
 
  Register callback into queue and will be called on parse.
 
@@ -242,13 +233,11 @@ var nq = nepq();              // : Nq
 
 * `method: string`
 
-* `namespace: string[]`
-
 * `name: string`
 
-* `param: any`
+* `params: any`
 
-* `retrieve: any`
+* `retrieves: any`
 
 * `response(result?: any): any`
 
@@ -265,25 +254,25 @@ var app = express(),
     users = [],
     _id = 0;
 
-nepq.on('create', '', 'user', function (q, req, res, next) {
-  if (!q.param.name || !q.param.pwd) {
+nepq.on('create', 'user', function (q, req, res, next) {
+  if (!q.params.name || !q.params.pwd) {
     res.status(400).send('invalid name or password!');
     return;
   }
   var user = {
     id: _id++,
-    name: q.param.name,
-    pwd: q.param.pwd
+    name: q.params.name,
+    pwd: q.params.pwd
   };
   users.push(user);
   res.json(q.response(user));
 });
 
-nepq.on('read', '', 'user', function(q, req, res, next) {
+nepq.on('read', 'user', function(q, req, res, next) {
   var user = users.filter(function(x) {
-    return (!q.param.id || q.param.id === x.id) &&
-           (!q.param.name || q.param.name === x.name) &&
-           (!q.param.pwd || q.param.pwd === x.pwd);
+    return (!q.params.id || q.params.id === x.id) &&
+           (!q.params.name || q.params.name === x.name) &&
+           (!q.params.pwd || q.params.pwd === x.pwd);
   });
   res.json(q.response(user ? user[0] : null));
 });
