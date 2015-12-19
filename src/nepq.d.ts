@@ -12,7 +12,7 @@ declare module "nepq" {
   }
 
   class Nq {
-    parser(): {
+    parser: {
       parse(s: string),
       on(event: string, handler: Function)
     };
