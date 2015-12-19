@@ -1,4 +1,7 @@
 declare module "nepq" {
+
+  function n(): Nq;
+
   interface NepQ {
     method: string;
     name: string;
@@ -27,5 +30,5 @@ declare module "nepq" {
     error(callback: (...args) => void): void;
   }
 
-  export default function(): Nq;
+  export = n;
 }
