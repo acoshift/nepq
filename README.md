@@ -6,6 +6,8 @@
 
 Nep Query is a query language influenced by Facebook's GraphQL.
 
+*Body-parser will be moved to "nepq-bodyparser"*
+
 ## Syntax
 
 ```
@@ -18,10 +20,10 @@ will be parsed into object:
 
 ```ts
 interface NepQ {
-  method: string;         // not null, not empty
-  name: string;           // not null, can be empty string, can include '.'
-  params: any;            // can be null, empty array, or empty object
-  retrieves: any;         // not null
+  method: string;
+  name: string;
+  params: any;
+  retrieves: any;
 }
 ```
 
@@ -173,145 +175,9 @@ read stock.product { name }
 }
 ```
 
-## API Document
-
-```js
-var nepq = require('nepq')(); // : Nq
-// or
-var nepq = require('nepq');   // : Function(): Nq
-var nq = nepq();              // : Nq
-```
-
-`class Nq`
-* `parser.parse(s: string): NepQ`
-
- Parse string into request object.
-
- Return object if valid, otherwise null.
-
-* `parser.on(event: string, handler: Function)`
-
-  * `parser.on('before', (s: string) => string): void`
-
-    Before parse event.
-
-  * `parser.on('after', (q: NepQ) => void: void`
-
-    After parsed event.
-
-  * `parser.on('error', (err: Error, s: string) => NepQ): void`
-
-    On parse error, can fix result here, return null or undefined will call nepq.error.
-
-* `parse(s: string, ...args): void`
-
- Parse string into request, then call callbacks from 'on'.
-
-* `on(method: string, name: string, callback: (q: NepQ, ...args, next: Function) => void): void`
-
- Register callback into queue and will be called on parse.
-
- If next was called, next matched callback in queue will be called.
-
- method, namespace, or name can be null for matched anything.
-
-* `use(callback: (q: NepQ, ...args, next: Function) => void): void`
-
- Short version for nepq.on(null, null, null, callback).
-
-* `error(callback: (...args) => void): void`
-
- Callback will be called when parse error.
-
-* `bodyParser(): (req: http.IncomingMessage, res: http.ServerResponse, next: Function) => void`
-
- Return body-parser function for "application/nepq" content-type.
-
- nepq.parse will be called after get request.
-
-`class NepQ`
-
-* `method: string`
-
-* `name: string`
-
-* `params: any`
-
-* `retrieves: any`
-
-* `response(result?: any): any`
-
- Fillter result into retrieve format.
-
- Return result in retrieve format.
-
 ## Example
 ```js
-var nepq = require('nepq')(),
-    express = require('express');
+var nepq = require('nepq').parser;
 
-var app = express(),
-    users = [],
-    _id = 0;
-
-nepq.on('create', 'user', function (q, req, res, next) {
-  if (!q.params.name || !q.params.pwd) {
-    res.status(400).send('invalid name or password!');
-    return;
-  }
-  var user = {
-    id: _id++,
-    name: q.params.name,
-    pwd: q.params.pwd
-  };
-  users.push(user);
-  res.json(q.response(user));
-});
-
-nepq.on('read', 'user', function(q, req, res, next) {
-  var user = users.filter(function(x) {
-    return (!q.params.id || q.params.id === x.id) &&
-           (!q.params.name || q.params.name === x.name) &&
-           (!q.params.pwd || q.params.pwd === x.pwd);
-  });
-  res.json(q.response(user ? user[0] : null));
-});
-
-nepq.use(function(q, req, res, next) {
-  res.status(400).send('no api');
-});
-
-nepq.error(function(req, res, next) {
-  res.status(400).send('bad request');
-});
-
-app.use(nepq.bodyParser());
-
-app.use(function(req, res) {
-  res.end('no api');
-});
-
-app.listen(8000);
+console.log(nepq.parse('read stock.product(id: 10) { name, price }'));
 ```
-
-```
-$ curl localhost:8000
-> no api
-
-$ curl --header "content-type: application/nepq" localhost:8000
-> bad request
-
-$ curl --header "content-type: application/nepq" --data "create user() {}" localhost:8000
-> invalid name or password!
-
-$ curl --header "content-type: application/nepq" --data "create user(name: \"user1\", pwd: \"1234\")" localhost:8000
-> {"id":0,"name":"user1","pwd":"1234"}
-
-$ curl --header "content-type: application/nepq" --data "create user(name: \"user2\", pwd: \"6666\") { }" localhost:8000
-> {}
-
-$ curl --header "content-type: application/nepq" --data "read user(name: \"user2\") { id, pwd }" localhost:8000
-> {"id":1,"pwd":"6666"}
-```
-
-More example ? visit: https://github.com/acoshift/nepdb
