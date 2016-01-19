@@ -1,8 +1,8 @@
 {
   "name": "nepq",
-  "version": "3.0.0-alpha.3",
+  "version": "3.0.0",
   "description": "Nep Query is a query language.",
-  "main": "index.js",
+  "main": "nepq.js",
   "scripts": {
     "test": "gulp test"
   },
@@ -11,9 +11,8 @@
     "url": "git+https://github.com/acoshift/nepq.git"
   },
   "keywords": [
-    "database",
-    "api",
     "query",
+    "api",
     "json",
     "language",
     "parser"
@@ -25,16 +24,11 @@
   },
   "homepage": "https://github.com/acoshift/nepq#readme",
   "devDependencies": {
-    "babel-preset-es2015": "^6.3.13",
     "del": "^2.1.0",
     "gulp": "^3.9.0",
-    "gulp-babel": "^6.1.1",
     "gulp-jison": "^1.2.0",
     "gulp-mocha": "^2.2.0",
-    "jison": "^0.4.15",
+    "jison": "^0.4.16",
     "mocha": "^2.3.4"
-  },
-  "dependencies": {
-    "lodash": "^3.10.1"
   }
 }

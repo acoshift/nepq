@@ -1,8 +1,7 @@
 var gulp = require('gulp'),
     jison = require('gulp-jison'),
     mocha = require('gulp-mocha'),
-    del = require('del'),
-    babel = require('gulp-babel');
+    del = require('del');
 
 var paths = {
   src: './src/',
@@ -20,19 +19,8 @@ gulp.task('clean-dist', function() {
 });
 
 gulp.task('jison', function() {
-  return gulp.src(paths.src + 'lib/*.jison')
+  return gulp.src(paths.src + '*.jison')
     .pipe(jison({ moduleType: 'commonjs' }))
-    .pipe(gulp.dest(paths.build + 'lib/'));
-});
-
-gulp.task('js', function() {
-  return gulp.src(paths.src + '**/*.js')
-    .pipe(babel({ presets: ['es2015']}))
-    .pipe(gulp.dest(paths.build));
-});
-
-gulp.task('.d.ts', function() {
-  return gulp.src(paths.src + '**/*.d.ts')
     .pipe(gulp.dest(paths.build));
 });
 
@@ -41,20 +29,13 @@ gulp.task('dist', ['build'], function() {
     .pipe(gulp.dest(paths.dist));
 });
 
-gulp.task('test-parser', ['build'], function() {
-  return gulp.src('test_parser.js', { cwd: paths.test, read: false })
-    .pipe(mocha());
-});
-
-gulp.task('test-response', ['build'], function() {
-  return gulp.src('test_response.js', { cwd: paths.test, read: false })
+gulp.task('test', ['build'], function() {
+  return gulp.src('test.js', { read: false })
     .pipe(mocha());
 });
 
 gulp.task('clean', ['clean-dist', 'clean-build']);
 
-gulp.task('test', ['build', 'test-parser', 'test-response']);
-
-gulp.task('build', ['jison', 'js', '.d.ts']);
+gulp.task('build', ['jison']);
 
 gulp.task('default', ['build']);

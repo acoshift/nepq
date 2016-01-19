@@ -7,4 +7,4 @@ node_js:
 sudo: false
 
 before_script:
-  - npm install -g gulp babel
+  - npm install -g gulp
