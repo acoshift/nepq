@@ -51,6 +51,15 @@ nepq
       }
       return $$;
     }
+  | eof
+    {
+      return {
+        method: '',
+        name: '',
+        params: null,
+        retrieves: null
+      };
+    }
   ;
 
 name
