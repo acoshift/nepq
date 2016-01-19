@@ -41,7 +41,7 @@ null                                    return 'null';
 %%
 
 nepq
-  : id name parameters rets eof
+  : id nameOrEmpty parameters rets eof
     {
       $$ = {
         method: $1,
@@ -63,10 +63,14 @@ nepq
     }
   ;
 
-name
+nameOrEmpty
   :
     { $$ = ''; }
-  | id
+  | name
+  ;
+
+name
+  : id
   | name '.' id
     { $$ = $1 + $2 + $3; }
   ;
@@ -106,16 +110,16 @@ ret0
   ;
 
 retv1
-  : id
+  : name
     { $$ = {}; $$[$1] = 1; }
-  | id rets1
+  | name rets1
     { $$ = {}; $$[$1] = $2; }
   ;
 
 retv0
-  : id
+  : name
     { $$ = {}; $$[$1] = 0; }
-  | id rets0
+  | name rets0
     { $$ = {}; $$[$1] = $2; }
   ;
 
