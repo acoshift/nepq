@@ -41,24 +41,25 @@ null                                    return 'null';
 %%
 
 nepq
-  : id name parameters retsOrNull eof
+  : id name parameters rets eof
     {
       $$ = {
         method: $1,
         name: $2,
         params: $3,
         retrieves: $4
-      }
+      };
       return $$;
     }
   | eof
     {
-      return {
+      $$ = {
         method: '',
         name: '',
-        params: null,
-        retrieves: null
+        params: {},
+        retrieves: 1
       };
+      return $$;
     }
   ;
 
@@ -70,29 +71,51 @@ name
     { $$ = $1 + $2 + $3; }
   ;
 
- retsOrNull
+rets
   :
     { $$ = 1; }
-  | rets
+  | rets1
+  | '-' rets0
+   { $$ = $2; }
   ;
 
-rets
+rets1
   : '{' '}'
     { $$ = {}; }
-  | '{' ret '}'
+  | '{' ret1 '}'
     { $$ = $2; }
   ;
 
-ret
-  : retv
-  | retv ',' ret
+rets0
+  : '{' '}'
+    { $$ = {}; }
+  | '{' ret0 '}'
+    { $$ = $2; }
+  ;
+
+ret1
+  : retv1
+  | retv1 ',' ret1
     { $$ = Object.assign($1, $3); }
   ;
 
-retv
+ret0
+  : retv0
+  | retv0 ',' ret0
+    { $$ = Object.assign($1, $3); }
+  ;
+
+retv1
   : id
     { $$ = {}; $$[$1] = 1; }
-  | id rets
+  | id rets1
+    { $$ = {}; $$[$1] = $2; }
+  ;
+
+retv0
+  : id
+    { $$ = {}; $$[$1] = 0; }
+  | id rets0
     { $$ = {}; $$[$1] = $2; }
   ;
 
