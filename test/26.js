@@ -31,7 +31,7 @@ module.exports = {
       };
     },
     price: function(args) {
-      return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].slice(...args);
+      return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].slice(args[0], args[1]);
     },
     obj: function(args, nq, cb) {
       cb(nq.method + ' ' + args[0].name);
