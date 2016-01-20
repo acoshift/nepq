@@ -27,25 +27,51 @@ interface NepQ {
 
 ### Example
 
-Basic request.
+Basic
+
+with inclusion :
 ```
 read stock.product(id: 10) { name, price }
 ```
-```js
+```json
 {
-  method: "read",
-  name: "stock.product",
-  params: {
-    id: 10
-  },
-  retrieves: {
-    name: 1,
-    price: 1
+  "method": "read",
+  "name": "stock.product",
+  "params": [
+    {
+      "id": 10
+    }
+  ],
+  "retrieves": {
+    "name": 1,
+    "price": 1
   }
 }
 ```
+--
+
+with exclusion :
+```
+read stock.product(id: 10) -{ price }
+```
+```json
+{
+  "method": "read",
+  "name": "stock.product",
+  "params": [
+    {
+      "id": 10
+    }
+  ],
+  "retrieves": {
+    "price": 0
+  }
+}
+```
+
 ---
-Use json as parameter.
+
+Use json as parameter :
 ```
 create db.user.customer({
   "user": "cust1",
@@ -56,27 +82,65 @@ create db.user.customer({
     "zip": "12345",
     "country": "TH"
   }
-}) { }
+}) {}
 ```
-```js
+```json
 {
-  method: "create",
-  name: "db.user.customer",
-  params: {
-    user: "cust1",
-    email: "cust1@email.com",
-    tel: "+661234567",
-    address: {
-      province: "Bangkok",
-      zip: "12345",
-      country: "TH"
+  "method": "create",
+  "name": "db.user.customer",
+  "params": [
+    {
+      "user": "cust1",
+      "email": "cust1@email.com",
+      "tel": "+661234567",
+      "address": {
+        "province": "Bangkok",
+        "zip": "12345",
+        "country": "TH"
+      }
     }
-  },
-  retrieves: { }
+  ],
+  "retrieves": 0
 }
 ```
+--
+
+or JavaScript style :
+```
+create db.user.customer({
+  user: "cust1",
+  email: "cust1@email.com",
+  tel: "+661234567",
+  address: {
+    province: "Bangkok",
+    zip: "12345",
+    country: "TH"
+  }
+})
+```
+```json
+{
+  "method": "create",
+  "name": "db.user.customer",
+  "params": [
+    {
+      "user": "cust1",
+      "email": "cust1@email.com",
+      "tel": "+661234567",
+      "address": {
+        "province": "Bangkok",
+        "zip": "12345",
+        "country": "TH"
+      }
+    }
+  ],
+  "retrieves": 1
+}
+```
+
 ---
-Nested retrieve.
+
+Nested retrieves :
 ```
 read db.user.customer(email: "cust1@email.com") {
   id,
@@ -88,90 +152,239 @@ read db.user.customer(email: "cust1@email.com") {
   }
 }
 ```
-```js
+```json
 {
-  method: "read",
-  name: "db.user.customer",
-  params: {
-    email: "cust1@email.com"
-  },
-  retrieves: {
-    id: 1,
-    user: 1,
-    email: 1,
-    address: {
-      zip: 1,
-      country: 1
+  "method": "read",
+  "name": "db.user.customer",
+  "params": [
+    {
+      "email": "cust1@email.com"
+    }
+  ],
+  "retrieves": {
+    "id": 1,
+    "user": 1,
+    "email": 1,
+    "address": {
+      "zip": 1,
+      "country": 1
     }
   }
 }
 ```
 ---
-Anonymous parameters.
+
+Anonymous parameters :
 ```
-update user({ id: 1234 }, { email: "new_mail@email.com" }) { }
+update user({ id: 1234 }, { email: "new_mail@email.com" }) -{}
 ```
-```js
+```json
 {
-  method: "update",
-  name: "user",
-  params: [
-    { id: 1234 },
-    { email: "new_mail@email.com" }
+  "method": "update",
+  "name": "user",
+  "params": [
+    {
+      "id": 1234
+    },
+    {
+      "email": "new_mail@email.com"
+    }
   ],
-  retrieves: { }
+  "retrieves": 1
 }
 ```
 ---
-Retrieve everything.
+
+Inclusion retrieves with parameters :
 ```
-delete db.user(1234)
-```
-```js
-{
-  method: "delete",
-  name: "db.user",
-  params: 1234,
-  retrieves: 1
+calc sum(10, 20, 30, 40) {
+  result(0)
 }
 ```
----
-These are valid.
-```
-read
-```
-```js
+```json
 {
-  method: "read",
-  name: "",
-  params: { },
-  retrieves: 1
-}
-```
-```
-read stock.product
-```
-```js
-{
-  method: "read",
-  name: "stock.product",
-  params: { },
-  retrieves: 1
-}
-```
-```
-read stock.product { name }
-```
-```js
-{
-  method: "read",
-  name: "stock.product",
-  params: { },
-  retrieves: {
-    name: 1
+  "method": "calc",
+  "name": "sum",
+  "params": [
+    10,
+    20,
+    30,
+    40
+  ],
+  "retrieves": {
+    "result": 1,
+    "result.$": [
+      0
+    ]
   }
 }
 ```
+---
+
+Retrieves with parameters :
+```
+calc sum(10, 20, 30, 40) *{
+  result(0)
+}
+```
+```json
+{
+  "method": "calc",
+  "name": "sum",
+  "params": [
+    10,
+    20,
+    30,
+    40
+  ],
+  "retrieves": {
+    "result.$": [
+      0
+    ]
+  }
+}
+```
+---
+
+Some can be ignored :
+
+*empty string*
+```
+
+```
+```json
+{
+  "method": "",
+  "name": "",
+  "params": [],
+  "retrieves": 1
+}
+```
+--
+
+```
+read
+```
+```json
+{
+  "method": "read",
+  "name": "",
+  "params": [],
+  "retrieves": 1
+}
+```
+--
+
+```
+read stock.product
+```
+
+```json
+{
+  "method": "read",
+  "name": "stock.product",
+  "params": [],
+  "retrieves": 1
+}
+```
+--
+
+```
+read stock.product { name }
+```
+```json
+{
+  "method": "read",
+  "name": "stock.product",
+  "params": [],
+  "retrieves": {
+    "name": 1
+  }
+}
+```
+--
+
+```
+{
+  find(10) {
+    name,
+    price
+  }
+}
+```
+```json
+{
+  "method": "",
+  "name": "",
+  "params": [],
+  "retrieves": {
+    "find": {
+      "name": 1,
+      "price": 1
+    },
+    "find.$": [
+      10
+    ]
+  }
+}
+```
+---
+
+Hardcore :
+```
+q test(prefix: "123") {
+  id,
+  obj(2) -{
+    name(1, 2) +{
+      first
+    },
+    tel
+  },
+  result *{
+    res(0),
+    obj +{
+      ok
+    }
+  }
+}
+```
+```json
+{
+  "method": "q",
+  "name": "test",
+  "params": [
+    {
+      "prefix": "123"
+    }
+  ],
+  "retrieves": {
+    "id": 1,
+    "obj": {
+      "name": {
+        "first": 1
+      },
+      "name.$": [
+        1,
+        2
+      ],
+      "tel": 0
+    },
+    "obj.$": [
+      2
+    ],
+    "result": {
+      "res.$": [
+        0
+      ],
+      "obj": {
+        "ok": 1
+      }
+    }
+  }
+}
+```
+
+---
 
 ## API
 ```ts
@@ -179,7 +392,7 @@ declare module "nepq" {
   export interface NepQ {
     method: string;
     name: string;
-    params: any;
+    params: any[];
     retrieves: any;
   }
 
@@ -231,21 +444,19 @@ app.use((req, res) => {
   switch (nq.method) {
     case 'create':
       if (!db[nq.name]) db[nq.name] = [];
-      nq.params._id = _id++;
-      db[nq.name].push(nq.params);
-      console.log(nepq.response(nq, nq.params));
-      response(nq.params);
+      nq.params[0]._id = _id++;
+      db[nq.name].push(nq.params[0]);
+      response(nq.params[0]);
       break;
     case 'read':
       if (!db[nq.name]) return response(null);
-      if (typeof nq.params === 'object' && Object.keys(nq.params).length === 0) {
+      if (nq.params.length === 0) {
         return response(db[nq.name]);
       }
-      response(db[nq.name].filter(x => x._id === nq.params)[0] || null);
+      response(db[nq.name].filter(x => x._id === nq.params[0])[0] || null);
       break;
     case 'update':
       if (!db[nq.name]) return response(null);
-      if (!(nq.params instanceof Array)) return response(null);
       i = get(nq.params[0]);
       if (i === null) return response(null);
       nq.params[1]._id = db[nq.name][i]._id;
@@ -254,7 +465,7 @@ app.use((req, res) => {
       break;
     case 'delete':
       if (!db[nq.name]) return response(null);
-      i = get(nq.params);
+      i = get(nq.params[0]);
       if (i === null) return response(null);
       d = db[nq.name][i];
       delete db[nq.name][i];
@@ -263,7 +474,6 @@ app.use((req, res) => {
     case 'calc':
       switch (nq.name) {
         case 'sum':
-          if (!(nq.params instanceof Array)) nq.params = [ nq.params ];
           response({
             result: ([init]) => nq.params.reduce((p, v) => p + v, init)
           });
