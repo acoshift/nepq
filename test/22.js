@@ -3,7 +3,7 @@ module.exports = {
   obj: {
     method: "",
     name: "",
-    params: {},
+    params: [],
     retrieves: 1
   }
 };

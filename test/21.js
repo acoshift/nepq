@@ -3,9 +3,9 @@ module.exports = {
   obj: {
     method: "query",
     name: "test.db.users",
-    params: {
+    params: [{
       a: 10e+1
-    },
+    }],
     retrieves: {
       _id: 1,
       name: 1,

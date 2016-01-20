@@ -22,7 +22,7 @@ update user(user: "user1", _: {
   obj: {
     method: "update",
     name: "user",
-    params: {
+    params: [{
       user: "user1",
       _: {
         password: "new_password",
@@ -56,7 +56,7 @@ update user(user: "user1", _: {
           }
         }
       }
-    },
+    }],
     retrieves: 1
   }
 };

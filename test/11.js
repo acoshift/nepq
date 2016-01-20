@@ -3,9 +3,9 @@ module.exports = {
   obj: {
     method: "delete",
     name: "myweb.db.user",
-    params: {
+    params: [{
       user: "user1"
-    },
+    }],
     retrieves: 0
   }
 };

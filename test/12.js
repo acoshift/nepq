@@ -3,9 +3,9 @@ module.exports = {
   obj: {
     method: "read",
     name: "myweb.db.user",
-    params: {
+    params: [{
       user: "test\"text\n\u00a0\\"
-    },
+    }],
     retrieves: 0
   }
 };

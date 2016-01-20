@@ -210,9 +210,9 @@ parametersOrUndefined
 
 parameters
   : '(' ')'
-    { $$ = {}; }
+    { $$ = []; }
   | '(' params ')'
-    { $$ = $2; }
+    { $$ = [$2]; }
   | '(' anparams ')'
     { $$ = $2; }
   ;

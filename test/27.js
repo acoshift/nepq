@@ -3,7 +3,7 @@ module.exports = {
   obj: {
     method: "",
     name: "",
-    params: {},
+    params: [],
     retrieves: {
       id: 1,
       obj: {
@@ -15,9 +15,9 @@ module.exports = {
       },
       'obj.$': [2],
       result: {
-        'res.$': {
+        'res.$': [{
           id: 0
-        },
+        }],
         obj: {
           ok: 1
         }
@@ -41,8 +41,8 @@ module.exports = {
       };
     },
     result: {
-      res: function(arg) {
-        return arg.id * 10;
+      res: function(args) {
+        return args[0].id * 10;
       },
       obj: {
         ok: 1,

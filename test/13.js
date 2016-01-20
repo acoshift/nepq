@@ -3,10 +3,10 @@ module.exports = {
   obj: {
     method: "create",
     name: "test.product",
-    params: {
+    params: [{
       name: "p1",
       price: 100
-    },
+    }],
     retrieves: 0
   }
 };

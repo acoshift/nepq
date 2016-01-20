@@ -9,9 +9,9 @@ delete user(user: "user1") {
   obj: {
     method: "delete",
     name: "user",
-    params: {
+    params: [{
       user: "user1"
-    },
+    }],
     retrieves: {
       id: 1,
       name: 1,

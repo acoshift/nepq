@@ -2,7 +2,7 @@ declare module "nepq" {
   export interface NepQ {
     method: string;
     name: string;
-    params: any;
+    params: any[];
     retrieves: any;
   }
 

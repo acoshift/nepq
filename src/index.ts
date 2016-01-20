@@ -4,7 +4,7 @@ var _: LoDashStatic;
 interface NepQ {
   method: string;
   name: string;
-  params: any;
+  params: any[];
   retrieves: any;
 }
 

@@ -3,10 +3,10 @@ module.exports = {
   obj: {
     method: "read",
     name: "stock.product",
-    params: {
+    params: [{
       price: 100,
       $limit: 10
-    },
+    }],
     retrieves: {
       "name": 1
     }

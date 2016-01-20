@@ -3,12 +3,12 @@ module.exports = {
   obj: {
     method: "create",
     name: "stock.product",
-    params: {
+    params: [{
       $: false,
       p$: 10,
       $$: "123",
       _: 1
-    },
+    }],
     retrieves: 1
   }
 };
