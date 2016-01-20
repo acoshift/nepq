@@ -63,9 +63,9 @@ export = {
       return error;
     }
 
-    let callFunc = f => {
+    let callFunc = (f, args?) => {
       let r, t;
-      r = f(nq, p => t = p);
+      r = f(args, nq, p => t = p);
       return !_.isUndefined(t) ? t : r;
     };
 
@@ -83,11 +83,17 @@ export = {
         _.forOwn(r, (v, k) => {
           let p = _.slice(path);
           p.push(k);
-          let j = _.filter(p, isNaN).join('.');
+          let retPath = _.filter(p, isNaN);
+          let j = retPath.join('.');
+          let y: any = [_.dropRight(retPath), _.last(retPath)];
+          let args = () => {
+            let r = _.get(nq.retrieves, y[0].join('.')) || nq.retrieves;
+            return _.has(r, y[1] + '.$') ? r[y[1] + '.$'] : null;
+          };
           let l = _.get(nq.retrieves, j);
           if (method === 1) {
             if (_.isUndefined(l)) return;
-            if (_.isFunction(v)) v = callFunc(v);
+            if (_.isFunction(v)) v = callFunc(v, args());
             if (l !== 1) {
               if (_.isArray(v)) return rec(v, p);
               if (_.isObject(v)) return rec(v, p);
@@ -96,7 +102,7 @@ export = {
             if (_.isObject(v)) v = expand(v);
           } else if (method === 0) {
             if (l === 0) return;
-            if (_.isFunction(v)) v = callFunc(v);
+            if (_.isFunction(v)) v = callFunc(v, args());
             if (_.isArray(v)) return rec(v, p);
             if (_.isObject(v)) return rec(v, p);
           }
