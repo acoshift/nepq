@@ -20,9 +20,31 @@ will be parsed into object:
 interface NepQ {
   method: string;
   name: string;
-  params: any;
+  params: any[];
   retrieves: any;
 }
+```
+
+### Params Syntax
+```
+{name}: {value}, {name}: {value}, ...
+# or json
+{"{name}": {value}, ...}
+# or json with JavaScript style (ignore `"` for keys)
+{{name}: {value}, ...}
+# or arguments
+{value}, {value}, ...
+```
+
+### Retrieves Syntax
+```
+{name}({params}) {
+  {retrieves}
+},
+{name}({params}) {
+  {retrieves}
+},
+...
 ```
 
 ### Example
@@ -174,7 +196,7 @@ read db.user.customer(email: "cust1@email.com") {
 ```
 ---
 
-Anonymous parameters :
+Parameters :
 ```
 update user({ id: 1234 }, { email: "new_mail@email.com" }) -{}
 ```
@@ -193,6 +215,30 @@ update user({ id: 1234 }, { email: "new_mail@email.com" }) -{}
   "retrieves": 1
 }
 ```
+--
+
+flatten :
+```
+calc sum(...[10, 20, 30, 40]) *{ result(0) }
+```
+```json
+{
+  "method": "calc",
+  "name": "sum",
+  "params": [
+    10,
+    20,
+    30,
+    40
+  ],
+  "retrieves": {
+    "result.$": [
+      0
+    ]
+  }
+}
+```
+
 ---
 
 Inclusion retrieves with parameters :
