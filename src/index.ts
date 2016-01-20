@@ -56,7 +56,13 @@ export = {
       return !_.isUndefined(t) ? t : r;
     };
 
-    let method = null;
+    let method = (() => {
+      let r = null;
+      _.forOwn(nq.retrieves, v => {
+        if (_.isFinite(v)) return r = v;
+      });
+      return r;
+    })();
     let pick = r => {
       let obj = {};
       let expand = r => {

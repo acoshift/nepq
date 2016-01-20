@@ -68,7 +68,7 @@ nepq
       $$ = {
         method: '',
         name: '',
-        params: {},
+        params: [],
         retrieves: $1
       };
       return $$;
@@ -88,7 +88,7 @@ nepq
       $$ = {
         method: '',
         name: '',
-        params: {},
+        params: [],
         retrieves: 1
       };
       return $$;
@@ -197,7 +197,7 @@ pretv
 
 parametersOrEmpty
   :
-    { $$ = {}; }
+    { $$ = []; }
   | parameters
   ;
 

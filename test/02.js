@@ -12,9 +12,9 @@ module.exports = {
     }
   },
   result: {
-    id: 1111,
     username: "user1",
-    ok: 1
+    ok: 1,
+    id: 1111
   },
   response: {
     id: 1111
