@@ -15,7 +15,7 @@ export = {
     return this.parser.parse(s);
   },
 
-  response(nq: NepQ, obj: any, cb?: (result, error) => void): any {
+  response(nq: NepQ, obj: any, cb?: (result: any, error: Error) => void): any {
     if (typeof _ === 'undefined') {
       let res = new Error('nepq.response need lodash.');
       if (cb) cb(null, res);
@@ -121,5 +121,25 @@ export = {
 
     if (cb) cb(obj, null);
     return obj;
+  },
+
+  bodyParser(opt?: {
+    encoding?: string;
+  }) {
+    return (req, res, next) => {
+      if (!req) return next();
+      if (req.headers['content-type'] !== 'application/nepq') return next();
+
+      if (!opt) opt = {};
+      if (!opt.encoding) opt.encoding = 'utf8';
+
+      let data = [];
+      req.on('data', d => {
+        data.push(d);
+      }).on('end', () => {
+        req.body = this.parse(Buffer.concat(data).toString(opt.encoding));
+        next();
+      });
+    };
   }
 };
