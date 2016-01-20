@@ -1,5 +1,5 @@
-var parser = require('./lib/parser');
-import _ = require('lodash');
+import { LoDashStatic } from 'lodash';
+var _: LoDashStatic;
 
 interface NepQ {
   method: string;
@@ -9,17 +9,26 @@ interface NepQ {
 }
 
 export = {
-  parser: parser,
+  parser: require('./lib/parser'),
 
-  parse(s: string): NepQ {
-    return this.parser.parse(s);
+  parse(input: string): NepQ {
+    try {
+      return this.parser.parse(input);
+    } catch(e) {
+      return null;
+    }
   },
 
   response(nq: NepQ, obj: any, cb?: (result: any, error: Error) => void): any {
     if (typeof _ === 'undefined') {
-      let res = new Error('nepq.response need lodash.');
-      if (cb) cb(null, res);
-      return res;
+      try {
+        _ = require('lodash');
+      } catch(e) {}
+      if (typeof _ === 'undefined') {
+        let res = new Error('nepq.response need lodash.');
+        if (cb) cb(null, res);
+        return res;
+      }
     }
     if (_.isUndefined(obj)) {
       if (cb) cb(null, null);
