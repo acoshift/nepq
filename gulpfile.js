@@ -2,7 +2,8 @@ var gulp = require('gulp'),
     jison = require('gulp-jison'),
     mocha = require('gulp-mocha'),
     ts = require('gulp-typescript'),
-    del = require('del');
+    del = require('del'),
+    exec = require('child_process').exec;
 
 var paths = {
   src: './src/',
@@ -53,6 +54,11 @@ gulp.task('dist', ['build'], function() {
 
 gulp.task('test', ['build'], function() {
   return gulp.src('test.js', { read: false })
+    .pipe(mocha());
+});
+
+gulp.task('echo', ['build'], function() {
+  return gulp.src('echo.js', { read: false })
     .pipe(mocha());
 });
 
