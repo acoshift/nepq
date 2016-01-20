@@ -6,7 +6,9 @@
 <<EOF>>                                 return 'eof';
 \s+                                     ;
 \.                                      return '.';
+\+                                      return '+';
 \-                                      return '-';
+\*                                      return '*';
 \,                                      return ',';
 \:                                      return ':';
 \(                                      return '(';
@@ -41,13 +43,43 @@ null                                    return 'null';
 %%
 
 nepq
-  : id nameOrEmpty parameters rets eof
+  : id nameOrEmpty parametersOrEmpty retsOrEmpty eof
     {
       $$ = {
         method: $1,
         name: $2,
         params: $3,
         retrieves: $4
+      };
+      return $$;
+    }
+  | parameters eof
+    {
+      $$ = {
+        method: '',
+        name: '',
+        params: $1,
+        retrieves: 1
+      };
+      return $$;
+    }
+  | rets eof
+    {
+      $$ = {
+        method: '',
+        name: '',
+        params: {},
+        retrieves: $1
+      };
+      return $$;
+    }
+  | parameters rets eof
+    {
+      $$ = {
+        method: '',
+        name: '',
+        params: $1,
+        retrieves: $2
       };
       return $$;
     }
@@ -75,11 +107,19 @@ name
     { $$ = $1 + $2 + $3; }
   ;
 
-rets
+retsOrEmpty
   :
     { $$ = 1; }
-  | rets1
+  | rets
+  ;
+
+rets
+  : rets1
+  | '+' rets1
+   { $$ = $2; }
   | '-' rets0
+   { $$ = $2; }
+  | '*' retsp
    { $$ = $2; }
   ;
 
@@ -97,6 +137,13 @@ rets0
     { $$ = $2; }
   ;
 
+retsp
+  : '{' '}'
+    { $$ = 1; }
+  | '{' retp '}'
+    { $$ = $2; }
+  ;
+
 ret1
   : retv1
   | retv1 ',' ret1
@@ -109,6 +156,12 @@ ret0
     { $$ = Object.assign($1, $3); }
   ;
 
+retp
+  : retvp
+  | retvp ',' retp
+    { $$ = Object.assign($1, $3); }
+  ;
+
 retv1
   : name
     { $$ = {}; $$[$1] = 1; }
@@ -118,10 +171,11 @@ retv1
     { $$ = {}; $$[$1] = 1; $$[$1 + '.$'] = $3; }
   | name rets1
     { $$ = {}; $$[$1] = $2; }
-  | name '(' elements ')' rets1
-    { $$ = {}; $$[$1] = $5; $$[$1 + '.$'] = $3; }
   | name '(' ')' rets1
     { $$ = {}; $$[$1] = $4; $$[$1 + '.$'] = []; }
+  | name '(' elements ')' rets1
+    { $$ = {}; $$[$1] = $5; $$[$1 + '.$'] = $3; }
+  | pretv
   ;
 
 retv0
@@ -129,12 +183,58 @@ retv0
     { $$ = {}; $$[$1] = 0; }
   | name rets0
     { $$ = {}; $$[$1] = $2; }
+  | name '(' ')' rets0
+    { $$ = {}; $$[$1] = $4; $$[$1 + '.$'] = []; }
+  | name '(' elements ')' rets0
+    { $$ = {}; $$[$1] = $5; $$[$1 + '.$'] = $3; }
+  | pretv
+  ;
+
+retvp
+  : name
+    { $$ = {}; $$[$1 + '.$'] = []; }
+  | name rets0
+    { $$ = {}; $$[$1] = $2; }
+  | name '(' ')'
+    { $$ = {}; $$[$1 + '.$'] = []; }
+  | name '(' elements ')'
+    { $$ = {}; $$[$1 + '.$'] = $3; }
+  | name '(' ')' retsp
+    { $$ = {}; $$[$1] = $4; $$[$1 + '.$'] = []; }
+  | name '(' elements ')' retsp
+    { $$ = {}; $$[$1] = $5; $$[$1 + '.$'] = $3; }
+  | pretv
+  ;
+
+pretv
+  : name '+' rets1
+    { $$ = {}; $$[$1] = $3; }
+  | name '(' ')' '+' rets1
+    { $$ = {}; $$[$1] = $5; $$[$1 + '.$'] = []; }
+  | name '(' elements ')' '+' rets1
+    { $$ = {}; $$[$1] = $6; $$[$1 + '.$'] = $3; }
+  | name '-' rets0
+    { $$ = {}; $$[$1] = $3; }
+  | name '(' ')' '-' rets0
+    { $$ = {}; $$[$1] = $5; $$[$1 + '.$'] = []; }
+  | name '(' elements ')' '-' rets0
+    { $$ = {}; $$[$1] = $6; $$[$1 + '.$'] = $3; }
+  | name '*' retsp
+    { $$ = {}; $$[$1] = $3; }
+  | name '(' ')' '*' retsp
+    { $$ = {}; $$[$1] = $5; $$[$1 + '.$'] = []; }
+  | name '(' elements ')' '*' retsp
+    { $$ = {}; $$[$1] = $6; $$[$1 + '.$'] = $3; }
+  ;
+
+parametersOrEmpty
+  :
+    { $$ = {}; }
+  | parameters
   ;
 
 parameters
-  :
-    { $$ = {}; }
-  | '(' ')'
+  : '(' ')'
     { $$ = {}; }
   | '(' params ')'
     { $$ = $2; }

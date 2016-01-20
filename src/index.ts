@@ -50,34 +50,13 @@ export = {
 
     let error = null;
 
-    let method = null;
-    let findRetrieveMethod = ret => {
-      _.forOwn(ret, v => {
-        if (_.isPlainObject(v)) findRetrieveMethod(v);
-        if (_.isFinite(v)) {
-          if (_.isNull(method)) {
-            method = v;
-          } else {
-            if (method !== v) {
-              error = new Error('Retrieve can not mix with inclusion and exclusion.');
-              return;
-            }
-          }
-        }
-      });
-    };
-    findRetrieveMethod(nq.retrieves);
-    if (error) {
-      if (cb) cb(null, error);
-      return error;
-    }
-
     let callFunc = (f, args?) => {
       let r, t;
       r = f(args, nq, p => t = p);
       return !_.isUndefined(t) ? t : r;
     };
 
+    let method = null;
     let pick = r => {
       let obj = {};
       let expand = r => {
@@ -100,6 +79,7 @@ export = {
             return _.has(r, y[1] + '.$') ? r[y[1] + '.$'] : null;
           };
           let l = _.get(nq.retrieves, j);
+          if (_.isFinite(l)) method = l;
           if (method === 1) {
             if (_.isUndefined(l)) return;
             if (_.isFunction(v)) v = callFunc(v, args());
@@ -126,6 +106,11 @@ export = {
       obj = _(obj).map(pick).filter(x => !_.isEmpty(x)).value();
     } else {
       obj = pick(obj);
+    }
+
+    if (error) {
+      if (cb) cb(null, error);
+      return null;
     }
 
     if (cb) cb(obj, null);
