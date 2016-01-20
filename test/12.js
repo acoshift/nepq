@@ -6,6 +6,6 @@ module.exports = {
     params: {
       user: "test\"text\n\u00a0\\"
     },
-    retrieves: {}
+    retrieves: 0
   }
 };

@@ -10,5 +10,23 @@ module.exports = {
         tel: 0
       }
     }
+  },
+  result: {
+    id: 12345,
+    name: "test",
+    contact: {
+      address: "123/456",
+      tel: "012-345-6789",
+      country: "TH"
+    },
+    enabled: true
+  },
+  response: {
+    id: 12345,
+    contact: {
+      address: "123/456",
+      country: "TH"
+    },
+    enabled: true
   }
 };

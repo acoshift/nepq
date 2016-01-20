@@ -21,7 +21,26 @@ read user(user: "user1") {
         first: 1,
         last: 1
       },
-		  user: 1
+      user: 1
     }
+  },
+  result: {
+    id: 1111,
+    name: {
+      first: "first",
+      last: "last",
+      mid: "mid"
+    },
+    user: "user1",
+    pwd: "1234",
+    enabled: true
+  },
+  response: {
+    id: 1111,
+    name: {
+      first: "first",
+      last: "last"
+    },
+    user: "user1"
   }
 };

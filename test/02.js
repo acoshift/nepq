@@ -10,5 +10,13 @@ module.exports = {
     retrieves: {
       id: 1
     }
+  },
+  result: {
+    id: 1111,
+    username: "user1",
+    ok: 1
+  },
+  response: {
+    id: 1111
   }
 };

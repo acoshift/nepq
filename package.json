@@ -2,7 +2,7 @@
   "name": "nepq",
   "version": "3.0.0",
   "description": "Nep Query is a query language.",
-  "main": "nepq.js",
+  "main": "index.js",
   "scripts": {
     "test": "gulp test"
   },
@@ -28,7 +28,11 @@
     "gulp": "^3.9.0",
     "gulp-jison": "^1.2.0",
     "gulp-mocha": "^2.2.0",
+    "gulp-typescript": "^2.10.0",
     "jison": "^0.4.16",
     "mocha": "^2.3.4"
+  },
+  "optionalDependencies": {
+    "lodash": "^4.0.0"
   }
 }

@@ -8,5 +8,13 @@ module.exports = {
       password: "1234"
     },
     retrieves: 1
+  },
+  result: {
+    token: "abcd",
+    ok: 1
+  },
+  response: {
+    token: "abcd",
+    ok: 1
   }
 };

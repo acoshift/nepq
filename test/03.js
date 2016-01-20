@@ -11,5 +11,17 @@ module.exports = {
       name: 1,
       user: 1
     }
+  },
+  result: {
+    id: 1111,
+    name: "my user name",
+    user: "user1",
+    pwd: "1234",
+    age: 1
+  },
+  response: {
+    id: 1111,
+    name: "my user name",
+    user: "user1"
   }
 };

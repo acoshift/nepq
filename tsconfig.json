@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "removeComments": true,
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "sourceMap": false,
+    "noResolve": true,
+    "outDir": "./build",
+    "isolatedModules": true
+  },
+  "exclude": [
+    "node_modules",
+    "build",
+    "dist"
+  ],
+  "compileOnSave": false,
+  "buildOnSave": false,
+  "atom": {
+    "rewriteTsconfig": false
+  }
+}

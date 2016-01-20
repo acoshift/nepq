@@ -1,6 +1,7 @@
 var gulp = require('gulp'),
     jison = require('gulp-jison'),
     mocha = require('gulp-mocha'),
+    ts = require('gulp-typescript'),
     del = require('del');
 
 var paths = {
@@ -9,6 +10,16 @@ var paths = {
   test: './test/',
   dist: './dist/'
 };
+
+var tsProject = ts.createProject({
+  target: 'es5',
+  module: 'commonjs',
+  removeComments: true,
+  moduleResolution: 'node',
+  noImplicitAny: false,
+  noResolve: true,
+  isolatedModules: true
+});
 
 gulp.task('clean-build', function() {
   return del([paths.build]);
@@ -19,8 +30,19 @@ gulp.task('clean-dist', function() {
 });
 
 gulp.task('jison', function() {
-  return gulp.src(paths.src + '*.jison')
+  return gulp.src(paths.src + '**/*.jison')
     .pipe(jison({ moduleType: 'commonjs' }))
+    .pipe(gulp.dest(paths.build));
+});
+
+gulp.task('ts', function() {
+  return gulp.src(paths.src + '**/*.ts')
+    .pipe(ts(tsProject))
+    .pipe(gulp.dest(paths.build))
+});
+
+gulp.task('d.ts', function() {
+  return gulp.src(paths.src + '**/*.d.ts')
     .pipe(gulp.dest(paths.build));
 });
 
@@ -36,6 +58,6 @@ gulp.task('test', ['build'], function() {
 
 gulp.task('clean', ['clean-dist', 'clean-build']);
 
-gulp.task('build', ['jison']);
+gulp.task('build', ['jison', 'ts', 'd.ts']);
 
 gulp.task('default', ['build']);

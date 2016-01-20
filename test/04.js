@@ -11,5 +11,7 @@ module.exports = {
       name: 1,
 		  user: 1
     }
-  }
+  },
+  result: null,
+  response: null
 };

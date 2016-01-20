@@ -7,6 +7,11 @@ module.exports = {
       username: "user1",
       password: "1234"
     },
-    retrieves: { }
-  }
+    retrieves: 0
+  },
+  result: {
+    token: "abcd",
+    ok: 1
+  },
+  response: {}
 };

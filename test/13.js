@@ -7,6 +7,6 @@ module.exports = {
       name: "p1",
       price: 100
     },
-    retrieves: {}
+    retrieves: 0
   }
 };
