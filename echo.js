@@ -8,7 +8,7 @@ var l = readline.createInterface({
 
 function loop() {
   l.question('NepQ: ', function(r) {
-    console.log(nepq.parse(r));
+    console.log(JSON.stringify(nepq.parse(r), null, 2));
     loop();
   });
 }
