@@ -3,9 +3,9 @@ module.exports = {
   obj: {
     method: "read",
     name: "user",
-    params: {
+    params: [{
       user: "user1"
-    },
+    }],
     retrieves: {
       id: 1,
       name: 1,

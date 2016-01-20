@@ -163,68 +163,36 @@ retp
   ;
 
 retv1
-  : name
-    { $$ = {}; $$[$1] = 1; }
-  | name '(' ')'
-    { $$ = {}; $$[$1] = 1; $$[$1 + '.$'] = []; }
-  | name '(' elements ')'
-    { $$ = {}; $$[$1] = 1; $$[$1 + '.$'] = $3; }
-  | name rets1
-    { $$ = {}; $$[$1] = $2; }
-  | name '(' ')' rets1
-    { $$ = {}; $$[$1] = $4; $$[$1 + '.$'] = []; }
-  | name '(' elements ')' rets1
-    { $$ = {}; $$[$1] = $5; $$[$1 + '.$'] = $3; }
+  : name parametersOrUndefined
+    { $$ = {}; $$[$1] = 1; if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2; }
+  | name parametersOrUndefined rets1
+    { $$ = {}; $$[$1] = $3; if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2; }
   | pretv
   ;
 
 retv0
-  : name
-    { $$ = {}; $$[$1] = 0; }
-  | name rets0
-    { $$ = {}; $$[$1] = $2; }
-  | name '(' ')' rets0
-    { $$ = {}; $$[$1] = $4; $$[$1 + '.$'] = []; }
-  | name '(' elements ')' rets0
-    { $$ = {}; $$[$1] = $5; $$[$1 + '.$'] = $3; }
+  : name parametersOrUndefined
+    { $$ = {}; $$[$1] = 0; if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2; }
+  | name parametersOrUndefined rets0
+    { $$ = {}; $$[$1] = $3; if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2; }
   | pretv
   ;
 
 retvp
-  : name
-    { $$ = {}; $$[$1 + '.$'] = []; }
-  | name rets0
-    { $$ = {}; $$[$1] = $2; }
-  | name '(' ')'
-    { $$ = {}; $$[$1 + '.$'] = []; }
-  | name '(' elements ')'
-    { $$ = {}; $$[$1 + '.$'] = $3; }
-  | name '(' ')' retsp
-    { $$ = {}; $$[$1] = $4; $$[$1 + '.$'] = []; }
-  | name '(' elements ')' retsp
-    { $$ = {}; $$[$1] = $5; $$[$1 + '.$'] = $3; }
+  : name parametersOrUndefined
+    { $$ = {}; if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2; }
+  | name parametersOrUndefined rets0
+    { $$ = {}; $$[$1] = $3; if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2; }
   | pretv
   ;
 
 pretv
-  : name '+' rets1
-    { $$ = {}; $$[$1] = $3; }
-  | name '(' ')' '+' rets1
-    { $$ = {}; $$[$1] = $5; $$[$1 + '.$'] = []; }
-  | name '(' elements ')' '+' rets1
-    { $$ = {}; $$[$1] = $6; $$[$1 + '.$'] = $3; }
-  | name '-' rets0
-    { $$ = {}; $$[$1] = $3; }
-  | name '(' ')' '-' rets0
-    { $$ = {}; $$[$1] = $5; $$[$1 + '.$'] = []; }
-  | name '(' elements ')' '-' rets0
-    { $$ = {}; $$[$1] = $6; $$[$1 + '.$'] = $3; }
-  | name '*' retsp
-    { $$ = {}; $$[$1] = $3; }
-  | name '(' ')' '*' retsp
-    { $$ = {}; $$[$1] = $5; $$[$1 + '.$'] = []; }
-  | name '(' elements ')' '*' retsp
-    { $$ = {}; $$[$1] = $6; $$[$1 + '.$'] = $3; }
+  : name parametersOrUndefined '+' rets1
+    { $$ = {}; $$[$1] = $4; if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2; }
+  | name parametersOrUndefined '-' rets0
+    { $$ = {}; $$[$1] = $4; if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2; }
+  | name parametersOrUndefined '*' retsp
+    { $$ = {}; $$[$1] = $4; if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2; }
   ;
 
 parametersOrEmpty
@@ -233,13 +201,20 @@ parametersOrEmpty
   | parameters
   ;
 
+parametersOrUndefined
+  :
+    { $$ = undefined; }
+  | parameters
+  ;
+
+
 parameters
   : '(' ')'
     { $$ = {}; }
   | '(' params ')'
     { $$ = $2; }
   | '(' anparams ')'
-    { $$ = $2.length === 1 ? $2[0] : $2; }
+    { $$ = $2; }
   ;
 
 anparams

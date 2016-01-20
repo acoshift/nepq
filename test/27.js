@@ -1,5 +1,5 @@
 module.exports = {
-  nepq: `{ id, obj(2) -{ name(1, 2) +{ first }, tel }, result *{ res(0), obj +{ ok } } }`,
+  nepq: `{ id, obj(2) -{ name(1, 2) +{ first }, tel }, result *{ res(id: 0), obj +{ ok } } }`,
   obj: {
     method: "",
     name: "",
@@ -15,7 +15,9 @@ module.exports = {
       },
       'obj.$': [2],
       result: {
-        'res.$': [0],
+        'res.$': {
+          id: 0
+        },
         obj: {
           ok: 1
         }
@@ -39,8 +41,8 @@ module.exports = {
       };
     },
     result: {
-      res: function(args) {
-        return args[0] * 10;
+      res: function(arg) {
+        return arg.id * 10;
       },
       obj: {
         ok: 1,

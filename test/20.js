@@ -3,7 +3,7 @@ module.exports = {
   obj: {
     method: "read",
     name: "",
-    params: 10,
+    params: [10],
     retrieves: {
       name: 1
     }
