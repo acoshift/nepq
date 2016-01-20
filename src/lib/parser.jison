@@ -5,6 +5,7 @@
 %%
 <<EOF>>                                 return 'eof';
 \s+                                     ;
+\.\.\.                                  return '...';
 \.                                      return '.';
 \+                                      return '+';
 \-                                      return '-';
@@ -215,6 +216,8 @@ parameters
     { $$ = [$2]; }
   | '(' anparams ')'
     { $$ = $2; }
+  | '(' '...' anparams ')'
+    { $$ = $3[0]; }
   ;
 
 anparams
