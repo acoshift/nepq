@@ -4,7 +4,7 @@
 [![npm version](https://img.shields.io/npm/v/nepq.svg)](https://www.npmjs.com/package/nepq)
 [![npm license](https://img.shields.io/npm/l/nepq.svg)]()
 
-Nep Query is a query language influenced by Facebook's GraphQL.
+Nep Query is a query language that was inspired by Facebook's GraphQL and MongoDB.
 
 ## Syntax
 
