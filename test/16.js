@@ -7,6 +7,7 @@ module.exports = {
       { id: 10 },
       { $inc: { price: 40 } }
     ],
-    retrieves: 1
+    retrieves: 1,
+    $_: 1
   }
 };

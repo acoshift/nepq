@@ -7,7 +7,8 @@ module.exports = {
       username: "user1",
       password: "1234"
     }],
-    retrieves: 1
+    retrieves: 1,
+    $_: 1
   },
   result: {
     token: "abcd",

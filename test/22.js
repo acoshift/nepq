@@ -4,6 +4,7 @@ module.exports = {
     method: "",
     name: "",
     params: [],
-    retrieves: 1
+    retrieves: 1,
+    $_: 1
   }
 };

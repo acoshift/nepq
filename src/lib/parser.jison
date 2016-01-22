@@ -41,6 +41,10 @@ null                                    return 'null';
 
 %start nepq
 
+%{
+  var retMethod = 1;
+%}
+
 %%
 
 nepq
@@ -50,7 +54,8 @@ nepq
         method: $1,
         name: $2,
         params: $3,
-        retrieves: $4
+        retrieves: $4,
+        $_: retMethod
       };
       return $$;
     }
@@ -60,7 +65,8 @@ nepq
         method: '',
         name: '',
         params: $1,
-        retrieves: 1
+        retrieves: 1,
+        $_: retMethod
       };
       return $$;
     }
@@ -70,7 +76,8 @@ nepq
         method: '',
         name: '',
         params: [],
-        retrieves: $1
+        retrieves: $1,
+        $_: retMethod
       };
       return $$;
     }
@@ -80,7 +87,8 @@ nepq
         method: '',
         name: '',
         params: $1,
-        retrieves: $2
+        retrieves: $2,
+        $_: retMethod
       };
       return $$;
     }
@@ -90,7 +98,8 @@ nepq
         method: '',
         name: '',
         params: [],
-        retrieves: 1
+        retrieves: 1,
+        $_: retMethod
       };
       return $$;
     }
@@ -116,12 +125,13 @@ retsOrEmpty
 
 rets
   : rets1
+    { $$ = $1; retMethod = 1; }
   | '+' rets1
-   { $$ = $2; }
+   { $$ = $2; retMethod = 1; }
   | '-' rets0
-   { $$ = $2; }
+   { $$ = $2; retMethod = 0; }
   | '*' retsp
-   { $$ = $2; }
+   { $$ = $2; retMethod = null; }
   ;
 
 rets1
@@ -165,35 +175,74 @@ retp
 
 retv1
   : name parametersOrUndefined
-    { $$ = {}; $$[$1] = 1; if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2; }
+    {
+      $$ = {};
+      $$[$1] = 1;
+      if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
+    }
   | name parametersOrUndefined rets1
-    { $$ = {}; $$[$1] = $3; if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2; }
+    {
+      $$ = {};
+      $$[$1] = $3;
+      if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
+    }
   | pretv
   ;
 
 retv0
   : name parametersOrUndefined
-    { $$ = {}; $$[$1] = 0; if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2; }
+    {
+      $$ = {};
+      $$[$1] = 0;
+      if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
+    }
   | name parametersOrUndefined rets0
-    { $$ = {}; $$[$1] = $3; if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2; }
+    {
+      $$ = {};
+      $$[$1] = $3;
+      if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
+    }
   | pretv
   ;
 
 retvp
   : name parametersOrUndefined
-    { $$ = {}; if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2; }
-  | name parametersOrUndefined rets0
-    { $$ = {}; $$[$1] = $3; if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2; }
+    {
+      $$ = {};
+      if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
+    }
+  | name parametersOrUndefined retsp
+    {
+      $$ = {};
+      if ($3 !== 1) $$[$1] = $3;
+      if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
+    }
   | pretv
   ;
 
 pretv
   : name parametersOrUndefined '+' rets1
-    { $$ = {}; $$[$1] = $4; if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2; }
+    {
+      $$ = {};
+      $$[$1] = $4;
+      if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
+      $$[$1 + '.$_'] = 1;
+    }
   | name parametersOrUndefined '-' rets0
-    { $$ = {}; $$[$1] = $4; if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2; }
+    {
+      $$ = {};
+      $$[$1] = $4;
+      if (typeof $2 !== 'undefined')
+      $$[$1 + '.$'] = $2;
+      $$[$1 + '.$_'] = 0;
+    }
   | name parametersOrUndefined '*' retsp
-    { $$ = {}; $$[$1] = $4; if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2; }
+    {
+      $$ = {};
+      if ($4 !== 1) $$[$1] = $4;
+      if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
+      $$[$1 + '.$_'] = null;
+    }
   ;
 
 parametersOrEmpty

@@ -9,6 +9,7 @@ module.exports = {
       $$: "123",
       _: 1
     }],
-    retrieves: 1
+    retrieves: 1,
+    $_: 1
   }
 };

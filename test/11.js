@@ -6,6 +6,7 @@ module.exports = {
     params: [{
       user: "user1"
     }],
-    retrieves: 0
+    retrieves: 0,
+    $_: 1
   }
 };

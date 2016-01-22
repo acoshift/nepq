@@ -22,7 +22,8 @@ read user(user: "user1") {
         last: 1
       },
       user: 1
-    }
+    },
+    $_: 1
   },
   result: {
     id: 1111,

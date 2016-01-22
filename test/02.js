@@ -9,7 +9,8 @@ module.exports = {
     }],
     retrieves: {
       id: 1
-    }
+    },
+    $_: 1
   },
   result: {
     username: "user1",

@@ -9,7 +9,8 @@ module.exports = {
     }],
     retrieves: {
       "name": 1
-    }
+    },
+    $_: 1
   },
   result: [
     { name: "0001", price: 100 },

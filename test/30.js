@@ -1,5 +1,5 @@
 module.exports = {
-  nepq: `calc sum(10, 20, 30, 40) *{ result(0) }`,
+  nepq: `calc sum(...[10, 20, 30, 40]) *{ result(0){} }`,
   obj: {
     method: "calc",
     name: "sum",

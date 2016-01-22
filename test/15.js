@@ -12,6 +12,7 @@ module.exports = {
     ],
     retrieves: {
       price: 1
-    }
+    },
+    $_: 1
   }
 };

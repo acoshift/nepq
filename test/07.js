@@ -16,6 +16,7 @@ delete user(user: "user1") {
       id: 1,
       name: 1,
       user: 1
-    }
+    },
+    $_: 1
   }
 };

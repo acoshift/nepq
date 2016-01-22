@@ -7,6 +7,7 @@ module.exports = {
       name: "p1",
       price: 100
     }],
-    retrieves: 0
+    retrieves: 0,
+    $_: 1
   }
 };

@@ -57,6 +57,7 @@ update user(user: "user1", _: {
         }
       }
     }],
-    retrieves: 1
+    retrieves: 1,
+    $_: 1
   }
 };

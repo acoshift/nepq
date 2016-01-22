@@ -8,6 +8,7 @@ module.exports = {
       id: 1,
       'contact.name': 1,
       'user.$': 1
-    }
+    },
+    $_: 1
   }
 };

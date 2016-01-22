@@ -1,12 +1,6 @@
 import { LoDashStatic } from 'lodash';
 var _: LoDashStatic;
-
-interface NepQ {
-  method: string;
-  name: string;
-  params: any[];
-  retrieves: any;
-}
+import { NepQ } from './nepq.d';
 
 export = {
   parser: require('./lib/parser'),
@@ -56,24 +50,16 @@ export = {
       return !_.isUndefined(t) ? t : r;
     };
 
-    let method = (() => {
-      let r = null;
-      _.forOwn(nq.retrieves, v => {
-        if (_.isFinite(v)) return r = v;
-      });
-      return r;
-    })();
     let pick = r => {
-      let obj = {};
+      let obj;
       let expand = r => {
-        return _.transform(r, (r, v, k) => {
-          if (_.isFunction(v)) v = callFunc(v);
+        _.forOwn(r, (v, k) => {
+          if (_.isFunction(v)) r[k] = callFunc(v);
           if (_.isArray(v)) expand(v);
           if (_.isObject(v)) expand(v);
-          r[k] = v;
         });
       };
-      let rec = (r, path) => {
+      let rec = (r, path, met) => {
         _.forOwn(r, (v, k) => {
           let p = _.slice(path);
           p.push(k);
@@ -84,27 +70,43 @@ export = {
             let r = _.get(nq.retrieves, y[0].join('.')) || nq.retrieves;
             return _.has(r, y[1] + '.$') ? r[y[1] + '.$'] : null;
           };
+          let $_ = (() => {
+            let r = _.get(nq.retrieves, y[0].join('.')) || nq.retrieves;
+            return _.has(r, y[1] + '.$_') ? r[y[1] + '.$_'] : undefined;
+          })();
           let l = _.get(nq.retrieves, j);
-          if (_.isFinite(l)) method = l;
-          if (method === 1) {
+          let mk = _.isUndefined($_) ? met : $_;
+          if (met === 1) {
+            _.unset(obj, p.join('.'));
             if (_.isUndefined(l)) return;
             if (_.isFunction(v)) v = callFunc(v, args());
             if (l !== 1) {
-              if (_.isArray(v)) return rec(v, p);
-              if (_.isObject(v)) return rec(v, p);
+              if (_.isArray(v)) return rec(v, p, mk);
+              if (_.isObject(v)) return rec(v, p, mk);
               return;
             }
-            if (_.isObject(v)) v = expand(v);
-          } else if (method === 0) {
-            if (l === 0) return;
+            if (_.isObject(v)) expand(v);
+            _.set(obj, p.join('.'), v);
+          } else if (met === 0) {
+            if (l === 0) {
+              _.unset(obj, p.join('.'));
+              return;
+            }
             if (_.isFunction(v)) v = callFunc(v, args());
-            if (_.isArray(v)) return rec(v, p);
-            if (_.isObject(v)) return rec(v, p);
+            _.set(obj, p.join('.'), v);
+            if (_.isArray(v)) return rec(v, p, mk);
+            if (_.isObject(v)) return rec(v, p, mk);
+          } else if (_.isNull(met)) {
+            if (_.isFunction(v)) v = callFunc(v, args());
+            _.set(obj, p.join('.'), v);
+            if (_.isArray(v)) return rec(v, p, mk);
+            if (_.isObject(v)) return rec(v, p, mk);
           }
-          _.set(obj, p.join('.'), v);
         });
       };
-      rec(r, []);
+
+      obj = nq.$_ === 1 ? {} : _.cloneDeep(r);
+      rec(r, [], nq.$_);
       return obj;
     };
 

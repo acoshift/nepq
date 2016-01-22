@@ -3,6 +3,7 @@ export interface NepQ {
   name: string;
   params: any[];
   retrieves: any;
+  $_: number;
 }
 
 export var parser: {

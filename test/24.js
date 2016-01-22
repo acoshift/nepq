@@ -9,7 +9,8 @@ module.exports = {
       contact: {
         tel: 0
       }
-    }
+    },
+    $_: 0
   },
   result: {
     id: 12345,

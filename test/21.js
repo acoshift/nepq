@@ -11,6 +11,7 @@ module.exports = {
       name: 1,
       role: 1,
       enabled: 1
-    }
+    },
+    $_: 1
   }
 };

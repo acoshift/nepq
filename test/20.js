@@ -6,6 +6,7 @@ module.exports = {
     params: [10],
     retrieves: {
       name: 1
-    }
+    },
+    $_: 1
   }
 };

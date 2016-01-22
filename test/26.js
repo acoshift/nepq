@@ -17,7 +17,8 @@ module.exports = {
       'price.$': [1, 6],
       obj: 1,
       'obj.$': [{name: "test"}]
-    }
+    },
+    $_: 1
   },
   result: {
     id: 1111,

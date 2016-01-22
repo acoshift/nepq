@@ -6,7 +6,8 @@ module.exports = {
     params: [10, 20, 30, 40],
     retrieves: {
       'result.$': [0]
-    }
+    },
+    $_: null
   },
   result: {
     ok: 1,

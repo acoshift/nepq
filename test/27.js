@@ -11,18 +11,23 @@ module.exports = {
           first: 1
         },
         'name.$': [1, 2],
+        'name.$_': 1,
         tel: 0
       },
       'obj.$': [2],
+      'obj.$_': 0,
       result: {
         'res.$': [{
           id: 0
         }],
         obj: {
           ok: 1
-        }
-      }
-    }
+        },
+        'obj.$_': 1,
+      },
+      'result.$_': null,
+    },
+    $_: 1
   },
   result: {
     id: function() { return "1234"; },
