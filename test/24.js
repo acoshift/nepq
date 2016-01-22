@@ -5,9 +5,9 @@ module.exports = {
     name: "test",
     params: [],
     retrieves: {
-      name: 0,
+      name: 1,
       contact: {
-        tel: 0
+        tel: 1
       }
     },
     $_: 0

@@ -193,7 +193,7 @@ retv0
   : name parametersOrUndefined
     {
       $$ = {};
-      $$[$1] = 0;
+      $$[$1] = 1;
       if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
     }
   | name parametersOrUndefined rets0

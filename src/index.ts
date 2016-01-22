@@ -88,7 +88,7 @@ export = {
             if (_.isObject(v)) expand(v);
             _.set(obj, p.join('.'), v);
           } else if (met === 0) {
-            if (l === 0) {
+            if (l === 1) {
               _.unset(obj, p.join('.'));
               return;
             }

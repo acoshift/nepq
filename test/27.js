@@ -12,7 +12,7 @@ module.exports = {
         },
         'name.$': [1, 2],
         'name.$_': 1,
-        tel: 0
+        tel: 1
       },
       'obj.$': [2],
       'obj.$_': 0,
