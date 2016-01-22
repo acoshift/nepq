@@ -11,7 +11,12 @@ module.exports = {
   },
   result: {
     ok: 1,
-    result: 100
+    result: function(args, nq, cb) {
+      var init = args[0];
+      setTimeout(function() {
+        cb(nq.params.reduce(function(p, c) { return p + c; }, init));
+      }, 1200);
+    }
   },
   response: {
     ok: 1,

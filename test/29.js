@@ -11,7 +11,10 @@ module.exports = {
   },
   result: {
     ok: 1,
-    result: 100
+    result: function(args, nq) {
+      var init = args[0];
+      return nq.params.reduce(function(p, c) { return p + c; }, init);
+    }
   },
   response: {
     ok: 1,

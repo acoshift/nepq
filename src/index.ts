@@ -13,54 +13,76 @@ export = {
     }
   },
 
-  response(nq: NepQ, obj: any, cb?: (result: any, error: Error) => void): any {
+  response(nq: NepQ, obj: any, cb: (result: any) => void): void {
     if (typeof _ === 'undefined') {
       try {
         _ = require('lodash');
       } catch(e) {}
       if (typeof _ === 'undefined') {
-        let res = new Error('nepq.response need lodash.');
-        if (cb) cb(null, res);
-        return res;
+        cb(undefined);
+        return;
       }
     }
     if (_.isUndefined(obj)) {
-      if (cb) cb(null, null);
-      return null;
+      cb(null);
+      return;
     }
     if (_.isNull(obj)) {
-      if (cb) cb(null, null);
-      return null;
+      cb(null);
+      return;
     }
     if (nq.retrieves === 1) {
-      if (cb) cb(obj, null);
-      return obj;
+      cb(obj);
+      return;
     }
     if (nq.retrieves === 0) {
-      let res = {};
-      if (cb) cb(res, null);
-      return res;
+      cb({});
+      return;
     }
 
-    let error = null;
-
-    let callFunc = (f, args?) => {
-      let r, t;
-      r = f(args, nq, p => t = p);
-      return !_.isUndefined(t) ? t : r;
+    let callFunc = (f, args, cb) => {
+      let r;
+      if (_.isNull(args)) {
+        r = f(nq, p => { if (_.isUndefined(r)) cb(p); });
+        if (!_.isUndefined(r)) cb(r);
+      } else {
+        r = f(args, nq, p => { if (_.isUndefined(r)) cb(p); });
+        if (!_.isUndefined(r)) cb(r);
+      }
     };
 
-    let pick = r => {
+    let pick = (r, cb) => {
       let obj;
-      let expand = r => {
+      let expand = (r, cb) => {
+        let cnt = 1;
+        let done = () => {
+          if (--cnt === 0) cb();
+        }
         _.forOwn(r, (v, k) => {
-          if (_.isFunction(v)) r[k] = callFunc(v);
-          if (_.isArray(v)) expand(v);
-          if (_.isObject(v)) expand(v);
+          ++cnt;
+          let elseCheck = () => {
+            if (_.isArray(v)) return expand(v, done);
+            if (_.isObject(v)) return expand(v, done);
+            done();
+          }
+          if (_.isFunction(v)) {
+            callFunc(v, null, p => {
+              r[k] = v = p;
+              elseCheck();
+            });
+          } else {
+            elseCheck();
+          }
         });
+        done();
       };
-      let rec = (r, path, met) => {
+      let rec = (r, path, met, cb) => {
+        let cnt = 1;
+        let done = () => {
+          if (--cnt === 0) cb();
+        }
         _.forOwn(r, (v, k) => {
+          ++cnt;
           let p = _.slice(path);
           p.push(k);
           let retPath = _.filter(p, isNaN);
@@ -76,53 +98,65 @@ export = {
           })();
           let l = _.get(nq.retrieves, j);
           let mk = _.isUndefined($_) ? met : $_;
-          if (met === 1) {
-            _.unset(obj, p.join('.'));
-            if (_.isUndefined(l)) return;
-            if (_.isFunction(v)) v = callFunc(v, args());
-            if (l !== 1) {
-              if (_.isArray(v)) return rec(v, p, mk);
-              if (_.isObject(v)) return rec(v, p, mk);
-              return;
+          let pj = p.join('.');
+          let checkRet = () => {
+            if (met === 1) {
+              if (_.has(obj, pj)) _.unset(obj, pj);
+              if (_.isUndefined(l)) return done();
+              if (_.isFunction(v)) return callFunc(v, args(), p => { v = p; checkRet(); });
+              if (l !== 1) {
+                if (_.isArray(v)) return rec(v, p, mk, done);
+                if (_.isObject(v)) return rec(v, p, mk, done);
+                done();
+                return;
+              }
+              if (_.isObject(v)) {
+                expand(v, () => { _.set(obj, pj, v); done(); });
+                return;
+              }
+              _.set(obj, pj, v);
+              done();
+            } else if (met === 0) {
+              if (l === 1) {
+                _.unset(obj, pj);
+                done();
+                return;
+              }
+              if (_.isFunction(v)) return callFunc(v, args(), p => { v = p; checkRet(); });
+              _.set(obj, pj, v);
+              if (_.isArray(v)) return rec(v, p, mk, done);
+              if (_.isObject(v)) return rec(v, p, mk, done);
+              done();
+            } else if (_.isNull(met)) {
+              if (_.isFunction(v)) return callFunc(v, args(), p => { v = p; checkRet(); });
+              _.set(obj, pj, v);
+              if (_.isArray(v)) return rec(v, p, mk, done);
+              if (_.isObject(v)) return rec(v, p, mk, done);
+              done();
             }
-            if (_.isObject(v)) expand(v);
-            _.set(obj, p.join('.'), v);
-          } else if (met === 0) {
-            if (l === 1) {
-              _.unset(obj, p.join('.'));
-              return;
-            }
-            if (_.isFunction(v)) v = callFunc(v, args());
-            _.set(obj, p.join('.'), v);
-            if (_.isArray(v)) return rec(v, p, mk);
-            if (_.isObject(v)) return rec(v, p, mk);
-          } else if (_.isNull(met)) {
-            if (_.isFunction(v)) v = callFunc(v, args());
-            _.set(obj, p.join('.'), v);
-            if (_.isArray(v)) return rec(v, p, mk);
-            if (_.isObject(v)) return rec(v, p, mk);
           }
+          checkRet();
         });
+        done();
       };
 
       obj = nq.$_ === 1 ? {} : _.cloneDeep(r);
-      rec(r, [], nq.$_);
-      return obj;
+      rec(r, [], nq.$_, () => cb(obj));
     };
 
     if (_.isArray(obj)) {
-      obj = _(obj).map(pick).filter(x => !_.isEmpty(x)).value();
+      let cnt = 1;
+      let done = () => {
+        if (--cnt === 0) cb(_.filter(obj, x => !_.isEmpty(x)));
+      }
+      _.forEach(obj, (v, k, a) => {
+        ++cnt;
+        pick(v, p => { a[k] = p; done(); });
+      });
+      done();
     } else {
-      obj = pick(obj);
+      pick(obj, cb);
     }
-
-    if (error) {
-      if (cb) cb(null, error);
-      return null;
-    }
-
-    if (cb) cb(obj, null);
-    return obj;
   },
 
   bodyParser(opt?: {

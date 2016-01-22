@@ -11,7 +11,7 @@ export var parser: {
 };
 
 export function parse(input: string): NepQ;
-export function response(nq: NepQ, obj: any, cb?: (result: any, error: Error) => void): any;
+export function response(nq: NepQ, obj: any, cb: (result: any) => void): void;
 export function bodyParser(opt?: {
   encoding?: string;
 }): (req, res, next) => void;

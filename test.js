@@ -10,14 +10,17 @@ fs.readdirSync(path.join(__dirname, 'test'))
     var t = require('./test/' + x);
     var n = nepq.parse(t.nepq);
     var o = t.obj;
-    var r = nepq.response(n, t.result);
-    var k = t.response;
     it('parser: ' + x, function(cb) {
       assert.deepEqual(n, o);
       cb();
     });
+
+    var k = t.response;
     it('response: ' + x, function(cb) {
-      assert.deepEqual(r, k);
-      cb();
+      nepq.response(n, t.result, function(r) {
+        assert.deepEqual(r, k);
+        cb();
+      });
     });
+
   });

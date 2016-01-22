@@ -474,7 +474,7 @@ export var parser: {
 };
 
 export function parse(input: string): NepQ;
-export function response(nq: NepQ, obj: any, cb?: (result: any, error: Error) => void): any;
+export function response(nq: NepQ, obj: any, cb?: (result: any) => void): void;
 export function bodyParser(opt?: {
   encoding?: string;
 }): (req, res, next) => void;
@@ -503,11 +503,11 @@ app.use((req, res) => {
 
   console.log(nq);
 
-  let get = id => db[nq.name].reduce((p, v, i, x) => {
+  let get = id => db[nq.name].reduce((p, v, i) => {
     return p === null && v._id === id ? i : p;
   }, null);
 
-  let response = result => res.json(nepq.response(nq, result));
+  let response = result => nepq.response(nq, result, r => res.json(r));
 
   let i, d;
 
