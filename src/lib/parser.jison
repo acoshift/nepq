@@ -174,13 +174,13 @@ retp
   ;
 
 retv1
-  : name parametersOrUndefined
+  : id parametersOrUndefined
     {
       $$ = {};
       $$[$1] = 1;
       if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
     }
-  | name parametersOrUndefined rets1
+  | id parametersOrUndefined rets1
     {
       $$ = {};
       $$[$1] = $3;
@@ -190,13 +190,13 @@ retv1
   ;
 
 retv0
-  : name parametersOrUndefined
+  : id parametersOrUndefined
     {
       $$ = {};
       $$[$1] = 1;
       if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
     }
-  | name parametersOrUndefined rets0
+  | id parametersOrUndefined rets0
     {
       $$ = {};
       $$[$1] = $3;
@@ -206,12 +206,12 @@ retv0
   ;
 
 retvp
-  : name parametersOrUndefined
+  : id parametersOrUndefined
     {
       $$ = {};
       if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
     }
-  | name parametersOrUndefined retsp
+  | id parametersOrUndefined retsp
     {
       $$ = {};
       if ($3 !== 1) $$[$1] = $3;
@@ -221,14 +221,14 @@ retvp
   ;
 
 pretv
-  : name parametersOrUndefined '+' rets1
+  : id parametersOrUndefined '+' rets1
     {
       $$ = {};
       $$[$1] = $4;
       if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
       $$[$1 + '.$_'] = 1;
     }
-  | name parametersOrUndefined '-' rets0
+  | id parametersOrUndefined '-' rets0
     {
       $$ = {};
       $$[$1] = $4;
@@ -236,7 +236,7 @@ pretv
       $$[$1 + '.$'] = $2;
       $$[$1 + '.$_'] = 0;
     }
-  | name parametersOrUndefined '*' retsp
+  | id parametersOrUndefined '*' retsp
     {
       $$ = {};
       if ($4 !== 1) $$[$1] = $4;
@@ -261,7 +261,7 @@ parametersOrUndefined
 parameters
   : '(' ')'
     { $$ = []; }
-  | '(' params ')'
+  | '(' members ')'
     { $$ = [$2]; }
   | '(' anparams ')'
     { $$ = $2; }
@@ -281,17 +281,6 @@ object
     { $$ = {}; }
   | '{' members '}'
     { $$ = $2; }
-  ;
-
-params
-  : param
-  | param ',' params
-    { $$ = Object.assign($1, $3); }
-  ;
-
-param
-  : id ':' value
-    { $$ = {}; $$[$1] = $3; }
   ;
 
 members

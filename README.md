@@ -28,21 +28,21 @@ interface NepQ {
 
 #### Params Syntax
 ```
-{name}: {value}, {name}: {value}, ...
+{id}: {value}, {id}: {value}, ...
 # or json
-{"{name}": {value}, ...}
+{"{id}": {value}, ...}
 # or json with JavaScript style (ignore `"` for keys)
-{{name}: {value}, ...}
+{{id}: {value}, ...}
 # or arguments
 {value}, {value}, ...
 ```
 
 #### Retrieves Syntax
 ```
-{name}({params}) {
+{id}({params}) {
   {retrieves}
 },
-{name}({params}) {
+{id}({params}) {
   {retrieves}
 },
 ...
