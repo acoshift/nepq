@@ -41,14 +41,8 @@ export = {
     }
 
     let callFunc = (f, args, cb) => {
-      let r;
-      if (_.isNull(args)) {
-        r = f(nq, p => { if (_.isUndefined(r)) cb(p); });
-        if (!_.isUndefined(r)) cb(r);
-      } else {
-        r = f(args, nq, p => { if (_.isUndefined(r)) cb(p); });
-        if (!_.isUndefined(r)) cb(r);
-      }
+      let r = f(args, nq, p => { if (_.isUndefined(r)) cb(p); });
+      if (!_.isUndefined(r)) cb(r);
     };
 
     let pick = (r, cb) => {
@@ -66,7 +60,7 @@ export = {
             done();
           }
           if (_.isFunction(v)) {
-            callFunc(v, null, p => {
+            callFunc(v, [], p => {
               r[k] = v = p;
               elseCheck();
             });
@@ -90,7 +84,7 @@ export = {
           let y: any = [_.dropRight(retPath), _.last(retPath)];
           let args = () => {
             let r = _.get(nq.retrieves, y[0].join('.')) || nq.retrieves;
-            return _.has(r, y[1] + '.$') ? r[y[1] + '.$'] : null;
+            return _.has(r, y[1] + '.$') ? r[y[1] + '.$'] : [];
           };
           let $_ = (() => {
             let r = _.get(nq.retrieves, y[0].join('.')) || nq.retrieves;
