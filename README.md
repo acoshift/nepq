@@ -9,7 +9,7 @@ Nep Query is a query language that was inspired by Facebook's GraphQL and MongoD
 ## Syntax
 
 ```
-{method} {name}({params}) {
+{method} {name}({params}) {retrieve_flag}{
   {retrieves}
 }
 ```
@@ -22,10 +22,11 @@ interface NepQ {
   name: string;
   params: any[];
   retrieves: any;
+  $_: number;       // retrieve flag :- 1 (inclusion), 0 (exclusion), null (no flag)
 }
 ```
 
-### Params Syntax
+#### Params Syntax
 ```
 {name}: {value}, {name}: {value}, ...
 # or json
@@ -36,7 +37,7 @@ interface NepQ {
 {value}, {value}, ...
 ```
 
-### Retrieves Syntax
+#### Retrieves Syntax
 ```
 {name}({params}) {
   {retrieves}
@@ -46,6 +47,13 @@ interface NepQ {
 },
 ...
 ```
+
+#### Retrieve Flag
+`''` or `'+'`: inclusion flag
+
+`'-'`: exclusion flag
+
+`'*'`: no flag
 
 ### Example
 
@@ -67,7 +75,8 @@ read stock.product(id: 10) { name, price }
   "retrieves": {
     "name": 1,
     "price": 1
-  }
+  },
+  "$_": 1
 }
 ```
 --
@@ -86,8 +95,9 @@ read stock.product(id: 10) -{ price }
     }
   ],
   "retrieves": {
-    "price": 0
-  }
+    "price": 1
+  },
+  "$_": 0
 }
 ```
 
@@ -122,7 +132,8 @@ create db.user.customer({
       }
     }
   ],
-  "retrieves": 0
+  "retrieves": 0,
+  "$_": 1
 }
 ```
 --
@@ -156,7 +167,8 @@ create db.user.customer({
       }
     }
   ],
-  "retrieves": 1
+  "retrieves": 1,
+  "$_": 1
 }
 ```
 
@@ -191,7 +203,8 @@ read db.user.customer(email: "cust1@email.com") {
       "zip": 1,
       "country": 1
     }
-  }
+  },
+  "$_": 1
 }
 ```
 ---
@@ -212,7 +225,8 @@ update user({ id: 1234 }, { email: "new_mail@email.com" }) -{}
       "email": "new_mail@email.com"
     }
   ],
-  "retrieves": 1
+  "retrieves": 1,
+  "$_": 0
 }
 ```
 --
@@ -235,7 +249,8 @@ calc sum(...[10, 20, 30, 40]) *{ result(0) }
     "result.$": [
       0
     ]
-  }
+  },
+  "$_": null
 }
 ```
 
@@ -262,7 +277,8 @@ calc sum(10, 20, 30, 40) {
     "result.$": [
       0
     ]
-  }
+  },
+  "$_": 1
 }
 ```
 ---
@@ -287,7 +303,8 @@ calc sum(10, 20, 30, 40) *{
     "result.$": [
       0
     ]
-  }
+  },
+  "$_": null
 }
 ```
 ---
@@ -303,7 +320,8 @@ Some can be ignored :
   "method": "",
   "name": "",
   "params": [],
-  "retrieves": 1
+  "retrieves": 1,
+  "$_": 1
 }
 ```
 --
@@ -316,7 +334,8 @@ read
   "method": "read",
   "name": "",
   "params": [],
-  "retrieves": 1
+  "retrieves": 1,
+  "$_": 1
 }
 ```
 --
@@ -330,7 +349,8 @@ read stock.product
   "method": "read",
   "name": "stock.product",
   "params": [],
-  "retrieves": 1
+  "retrieves": 1,
+  "$_": 1
 }
 ```
 --
@@ -345,7 +365,8 @@ read stock.product { name }
   "params": [],
   "retrieves": {
     "name": 1
-  }
+  },
+  "$_": 1
 }
 ```
 --
@@ -371,7 +392,8 @@ read stock.product { name }
     "find.$": [
       10
     ]
-  }
+  },
+  "$_": 1
 }
 ```
 ---
@@ -413,20 +435,25 @@ q test(prefix: "123") {
         1,
         2
       ],
-      "tel": 0
+      "name.$_": 1,
+      "tel": 1
     },
     "obj.$": [
       2
     ],
+    "obj.$_": 0,
     "result": {
       "res.$": [
         0
       ],
       "obj": {
         "ok": 1
-      }
-    }
-  }
+      },
+      "obj.$_": 1
+    },
+    "result.$_": null
+  },
+  "$_": 1
 }
 ```
 
@@ -434,26 +461,23 @@ q test(prefix: "123") {
 
 ## API
 ```ts
-declare module "nepq" {
-  export interface NepQ {
-    method: string;
-    name: string;
-    params: any[];
-    retrieves: any;
-  }
-
-  export var parser: {
-    parse: (input: string) => NepQ;
-  };
-
-  export function parse(input: string): NepQ;
-
-  export function response(nq: NepQ, obj: any, cb?: (result: any, error: Error) => void): any;
-
-  export function bodyParser(opt?: {
-    encoding?: string;
-  }): (req, res, next) => void;
+export interface NepQ {
+  method: string;
+  name: string;
+  params: any[];
+  retrieves: any;
+  $_: number;
 }
+
+export var parser: {
+  parse: (input: string) => NepQ;
+};
+
+export function parse(input: string): NepQ;
+export function response(nq: NepQ, obj: any, cb?: (result: any, error: Error) => void): any;
+export function bodyParser(opt?: {
+  encoding?: string;
+}): (req, res, next) => void;
 ```
 
 ## Example

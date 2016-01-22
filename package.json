@@ -1,6 +1,6 @@
 {
   "name": "nepq",
-  "version": "3.0.0-alpha.4",
+  "version": "3.0.0-alpha.5",
   "description": "Nep Query is a query language.",
   "main": "index.js",
   "scripts": {
