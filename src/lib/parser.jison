@@ -48,7 +48,7 @@ null                                    return 'null';
 %%
 
 nepq
-  : id nameOrEmpty parametersOrEmpty retsOrEmpty eof
+  : id nameOrStringOrEmpty parametersOrEmpty retsOrEmpty eof
     {
       $$ = {
         method: $1,
@@ -105,10 +105,11 @@ nepq
     }
   ;
 
-nameOrEmpty
+nameOrStringOrEmpty
   :
     { $$ = ''; }
   | name
+  | string
   ;
 
 name
