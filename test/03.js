@@ -1,5 +1,5 @@
 module.exports = {
-  nepq: `read user(user: "user1") { id, name, user }`,
+  nepq: `read user(user: "user1") { id, name, "user" }`,
   obj: {
     method: "read",
     name: "user",

@@ -180,7 +180,19 @@ retv1
       $$[$1] = 1;
       if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
     }
+  | string parametersOrUndefined
+    {
+      $$ = {};
+      $$[$1] = 1;
+      if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
+    }
   | id parametersOrUndefined rets1
+    {
+      $$ = {};
+      $$[$1] = $3;
+      if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
+    }
+  | string parametersOrUndefined rets1
     {
       $$ = {};
       $$[$1] = $3;
@@ -196,7 +208,19 @@ retv0
       $$[$1] = 1;
       if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
     }
+  | string parametersOrUndefined
+    {
+      $$ = {};
+      $$[$1] = 1;
+      if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
+    }
   | id parametersOrUndefined rets0
+    {
+      $$ = {};
+      $$[$1] = $3;
+      if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
+    }
+  | string parametersOrUndefined rets0
     {
       $$ = {};
       $$[$1] = $3;
@@ -211,7 +235,18 @@ retvp
       $$ = {};
       if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
     }
+  | string parametersOrUndefined
+    {
+      $$ = {};
+      if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
+    }
   | id parametersOrUndefined retsp
+    {
+      $$ = {};
+      if ($3 !== 1) $$[$1] = $3;
+      if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
+    }
+  | string parametersOrUndefined retsp
     {
       $$ = {};
       if ($3 !== 1) $$[$1] = $3;
@@ -228,6 +263,13 @@ pretv
       if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
       $$[$1 + '.$_'] = 1;
     }
+  | string parametersOrUndefined '+' rets1
+      {
+        $$ = {};
+        $$[$1] = $4;
+        if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
+        $$[$1 + '.$_'] = 1;
+      }
   | id parametersOrUndefined '-' rets0
     {
       $$ = {};
@@ -236,7 +278,22 @@ pretv
       $$[$1 + '.$'] = $2;
       $$[$1 + '.$_'] = 0;
     }
+  | string parametersOrUndefined '-' rets0
+    {
+      $$ = {};
+      $$[$1] = $4;
+      if (typeof $2 !== 'undefined')
+      $$[$1 + '.$'] = $2;
+      $$[$1 + '.$_'] = 0;
+    }
   | id parametersOrUndefined '*' retsp
+    {
+      $$ = {};
+      if ($4 !== 1) $$[$1] = $4;
+      if (typeof $2 !== 'undefined') $$[$1 + '.$'] = $2;
+      $$[$1 + '.$_'] = null;
+    }
+  | string parametersOrUndefined '*' retsp
     {
       $$ = {};
       if ($4 !== 1) $$[$1] = $4;
