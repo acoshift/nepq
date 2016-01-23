@@ -31,10 +31,6 @@ export = {
       cb(null);
       return;
     }
-    if (nq.retrieves === 1) {
-      cb(obj);
-      return;
-    }
     if (nq.retrieves === 0) {
       cb({});
       return;
@@ -45,31 +41,37 @@ export = {
       if (!_.isUndefined(r)) cb(r);
     };
 
+    let expand = (r, cb) => {
+      let cnt = 1;
+      let done = () => {
+        if (--cnt === 0) cb();
+      }
+      _.forOwn(r, (v, k) => {
+        ++cnt;
+        let elseCheck = () => {
+          if (_.isArray(v)) return expand(v, done);
+          if (_.isObject(v)) return expand(v, done);
+          done();
+        }
+        if (_.isFunction(v)) {
+          callFunc(v, [], p => {
+            r[k] = v = p;
+            elseCheck();
+          });
+        } else {
+          elseCheck();
+        }
+      });
+      done();
+    };
+
+    if (nq.retrieves === 1) {
+      expand(obj, () => cb(obj));
+      return;
+    }
+
     let pick = (r, cb) => {
       let obj;
-      let expand = (r, cb) => {
-        let cnt = 1;
-        let done = () => {
-          if (--cnt === 0) cb();
-        }
-        _.forOwn(r, (v, k) => {
-          ++cnt;
-          let elseCheck = () => {
-            if (_.isArray(v)) return expand(v, done);
-            if (_.isObject(v)) return expand(v, done);
-            done();
-          }
-          if (_.isFunction(v)) {
-            callFunc(v, [], p => {
-              r[k] = v = p;
-              elseCheck();
-            });
-          } else {
-            elseCheck();
-          }
-        });
-        done();
-      };
       let rec = (r, path, met, cb) => {
         let cnt = 1;
         let done = () => {
