@@ -1,6 +1,5 @@
-import { LoDashStatic } from 'lodash';
-var _: LoDashStatic;
 import { NepQ } from './nepq.d';
+import _ = require('lodash');
 
 export = {
   parser: require('./lib/parser'),
@@ -14,15 +13,6 @@ export = {
   },
 
   response(nq: NepQ, obj: any, cb: (result: any) => void): void {
-    if (typeof _ === 'undefined') {
-      try {
-        _ = require('lodash');
-      } catch(e) {}
-      if (typeof _ === 'undefined') {
-        cb(undefined);
-        return;
-      }
-    }
     if (_.isUndefined(obj)) {
       cb(null);
       return;
