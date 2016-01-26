@@ -10,14 +10,18 @@
     "outDir": "./build",
     "isolatedModules": true
   },
-  "exclude": [
-    "node_modules",
-    "build",
-    "dist"
+  "filesGlob": [
+    "src/**/*.ts",
+    "typings/tsd.d.ts"
   ],
   "compileOnSave": false,
   "buildOnSave": false,
   "atom": {
-    "rewriteTsconfig": false
-  }
+    "rewriteTsconfig": true
+  },
+  "files": [
+    "src/index.ts",
+    "src/nepq.d.ts",
+    "typings/tsd.d.ts"
+  ]
 }
