@@ -10,10 +10,10 @@ read user(user: "user1") {
 }
   `,
   obj: {
-    method: "read",
-    name: "user",
+    method: 'read',
+    name: 'user',
     params: [{
-      user: "user1"
+      user: 'user1'
     }],
     retrieves: {
       id: 1,
@@ -28,20 +28,20 @@ read user(user: "user1") {
   result: {
     id: 1111,
     name: {
-      first: "first",
-      last: "last",
-      mid: "mid"
+      first: 'first',
+      last: 'last',
+      mid: 'mid'
     },
-    user: "user1",
-    pwd: "1234",
+    user: 'user1',
+    pwd: '1234',
     enabled: true
   },
   response: {
     id: 1111,
     name: {
-      first: "first",
-      last: "last"
+      first: 'first',
+      last: 'last'
     },
-    user: "user1"
+    user: 'user1'
   }
-};
+}

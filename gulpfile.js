@@ -1,18 +1,18 @@
-var gulp = require('gulp'),
-    jison = require('gulp-jison'),
-    mocha = require('gulp-mocha'),
-    ts = require('gulp-typescript'),
-    del = require('del'),
-    exec = require('child_process').exec;
+'use strict'
+const gulp = require('gulp')
+const jison = require('gulp-jison')
+const mocha = require('gulp-mocha')
+const ts = require('gulp-typescript')
+const del = require('del')
 
-var paths = {
+const paths = {
   src: './src/',
   build: './build/',
   test: './test/',
   dist: './dist/'
-};
+}
 
-var tsProject = ts.createProject({
+const tsProject = ts.createProject({
   target: 'es5',
   module: 'commonjs',
   removeComments: true,
@@ -20,50 +20,50 @@ var tsProject = ts.createProject({
   noImplicitAny: false,
   noResolve: true,
   isolatedModules: true
-});
+})
 
-gulp.task('clean-build', function() {
-  return del([paths.build]);
-});
+gulp.task('clean-build', function () {
+  return del([paths.build])
+})
 
-gulp.task('clean-dist', function() {
-  return del([paths.dist]);
-});
+gulp.task('clean-dist', function () {
+  return del([paths.dist])
+})
 
-gulp.task('jison', function() {
+gulp.task('jison', function () {
   return gulp.src(paths.src + '**/*.jison')
     .pipe(jison({ moduleType: 'commonjs' }))
-    .pipe(gulp.dest(paths.build));
-});
+    .pipe(gulp.dest(paths.build))
+})
 
-gulp.task('ts', function() {
+gulp.task('ts', function () {
   return gulp.src(paths.src + '**/*.ts')
     .pipe(ts(tsProject))
     .pipe(gulp.dest(paths.build))
-});
+})
 
-gulp.task('d.ts', function() {
+gulp.task('d.ts', function () {
   return gulp.src(paths.src + '**/*.d.ts')
-    .pipe(gulp.dest(paths.build));
-});
+    .pipe(gulp.dest(paths.build))
+})
 
-gulp.task('dist', ['build'], function() {
+gulp.task('dist', ['build'], function () {
   return gulp.src([paths.build + '**/*', 'package.json', 'README.md'])
-    .pipe(gulp.dest(paths.dist));
-});
+    .pipe(gulp.dest(paths.dist))
+})
 
-gulp.task('test', ['build'], function() {
+gulp.task('test', ['build'], function () {
   return gulp.src('test.js', { read: false })
-    .pipe(mocha());
-});
+    .pipe(mocha())
+})
 
-gulp.task('echo', ['build'], function() {
+gulp.task('echo', ['build'], function () {
   return gulp.src('echo.js', { read: false })
-    .pipe(mocha());
-});
+    .pipe(mocha())
+})
 
-gulp.task('clean', ['clean-dist', 'clean-build']);
+gulp.task('clean', ['clean-dist', 'clean-build'])
 
-gulp.task('build', ['jison', 'ts', 'd.ts']);
+gulp.task('build', ['jison', 'ts', 'd.ts'])
 
-gulp.task('default', ['build']);
+gulp.task('default', ['build'])

@@ -20,17 +20,17 @@ update user(user: "user1", _: {
 })
   `,
   obj: {
-    method: "update",
-    name: "user",
+    method: 'update',
+    name: 'user',
     params: [{
-      user: "user1",
+      user: 'user1',
       _: {
-        password: "new_password",
+        password: 'new_password',
         enabled: false,
         age: 3,
         array: [
-          "e1",
-          "e2",
+          'e1',
+          'e2',
           4,
           6,
           false,
@@ -60,4 +60,4 @@ update user(user: "user1", _: {
     retrieves: 1,
     $_: 1
   }
-};
+}

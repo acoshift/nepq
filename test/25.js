@@ -1,8 +1,8 @@
 module.exports = {
   nepq: `read test { id, contact { name }, user { $ } }`,
   obj: {
-    method: "read",
-    name: "test",
+    method: 'read',
+    name: 'test',
     params: [],
     retrieves: {
       id: 1,
@@ -15,4 +15,4 @@ module.exports = {
     },
     $_: 1
   }
-};
+}

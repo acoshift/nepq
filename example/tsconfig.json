@@ -7,22 +7,19 @@
     "noImplicitAny": false,
     "sourceMap": false,
     "noResolve": true,
-    "outDir": "./build",
     "isolatedModules": true
   },
   "filesGlob": [
-    "src/**/*.ts",
+    "*.ts",
     "typings/tsd.d.ts"
   ],
   "compileOnSave": false,
   "buildOnSave": false,
   "atom": {
-    "rewriteTsconfig": true
+    "rewriteTsconfig": false
   },
   "files": [
-    "src/index.ts",
-    "src/lib/parser.d.ts",
-    "src/nepq.d.ts",
+    "index.ts",
     "typings/tsd.d.ts"
   ]
 }

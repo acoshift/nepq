@@ -1,155 +1,177 @@
-import { NepQ } from './nepq.d';
-import _ = require('lodash');
-import async = require('async');
+import { NepQ } from './nepq.d'
+import * as _ from 'lodash'
+import * as async from 'async'
+import * as parser from './lib/parser'
 
 export = {
-  parser: require('./lib/parser'),
+  parser: parser,
 
-  parse(input: string): NepQ {
+  parse (input: string): NepQ {
     try {
-      return this.parser.parse(input);
-    } catch(e) {
-      return null;
+      return this.parser.parse(input)
+    } catch (e) {
+      return null
     }
   },
 
-  response(nq: NepQ, obj: any, cb: (result: any) => void): void {
+  response (nq: NepQ, obj: any, cb: (result: any) => void): void {
     if (_.isUndefined(obj) || _.isNull(obj) || _.isFunction(obj)) {
-      cb(null);
-      return;
+      cb(null)
+      return
     }
     if (nq.retrieves === 0) {
-      cb({});
-      return;
+      cb({})
+      return
     }
 
     let callFunc = (f, args, cb): void => {
-      let r = f(args, nq, p => { if (_.isUndefined(r)) cb(p); });
-      if (!_.isUndefined(r)) cb(r);
-    };
+      let r = f(args, nq, p => { if (_.isUndefined(r)) cb(p) })
+      if (!_.isUndefined(r)) cb(r)
+    }
 
     let expand = (r, cb): void => {
       async.parallel(
         _.map(r, (v, k) => {
           return cb => {
             let elseCheck = () => {
-              if (_.isArray(v)) return expand(v, cb);
-              if (_.isObject(v)) return expand(v, cb);
-              cb();
+              if (_.isArray(v)) return expand(v, cb)
+              if (_.isObject(v)) return expand(v, cb)
+              cb()
             }
             if (_.isFunction(v)) {
               callFunc(v, [], p => {
-                r[k] = v = p;
-                elseCheck();
-              });
+                r[k] = v = p
+                elseCheck()
+              })
             } else {
-              elseCheck();
+              elseCheck()
             }
-          };
-        }), () => cb());
-    };
+          }
+        }), () => cb())
+    }
 
     if (nq.retrieves === 1) {
-      expand(obj, () => cb(obj));
-      return;
+      expand(obj, () => cb(obj))
+      return
     }
 
     let pick = (r, cb) => {
-      let obj;
+      let obj
       let rec = (r, path, met, cb): void => {
         async.parallel(
           _.map(r, (v, k) => {
             return cb => {
-              let p = _.slice(path);
-              p.push(k);
-              let retPath = _.filter(p, isNaN);
-              let j = retPath.join('.');
-              let y: any = [_.dropRight(retPath), _.last(retPath)];
+              let p = _.slice(path)
+              p.push(k)
+              let retPath = _.filter(p, isNaN)
+              let j = retPath.join('.')
+              let y: any = [_.dropRight(retPath), _.last(retPath)]
               let args = () => {
-                let r = _.get(nq.retrieves, y[0].join('.')) || nq.retrieves;
-                return _.has(r, y[1] + '.$') ? r[y[1] + '.$'] : [];
-              };
+                let r = _.get(nq.retrieves, y[0].join('.')) || nq.retrieves
+                return _.has(r, y[1] + '.$') ? r[y[1] + '.$'] : []
+              }
               let $_ = (() => {
-                let r = _.get(nq.retrieves, y[0].join('.')) || nq.retrieves;
-                return _.has(r, y[1] + '.$_') ? r[y[1] + '.$_'] : undefined;
-              })();
-              let l = _.get(nq.retrieves, j);
-              let mk = _.isUndefined($_) ? met : $_;
-              let pj = p.join('.');
+                let r = _.get(nq.retrieves, y[0].join('.')) || nq.retrieves
+                return _.has(r, y[1] + '.$_') ? r[y[1] + '.$_'] : undefined
+              })()
+              let l = _.get(nq.retrieves, j)
+              let mk = _.isUndefined($_) ? met : $_
+              let pj = p.join('.')
               let checkRet = () => {
                 if (met === 1) {
-                  if (_.has(obj, pj)) _.unset(obj, pj);
-                  if (_.isUndefined(l)) return cb();
-                  if (_.isFunction(v)) return callFunc(v, args(), p => { v = p; return checkRet(); });
+                  if (_.has(obj, pj)) _.unset(obj, pj)
+                  if (_.isUndefined(l)) return cb()
+                  if (_.isFunction(v)) {
+                    return callFunc(v, args(), p => {
+                      v = p
+                      return checkRet()
+                    })
+                  }
                   if (l !== 1) {
-                    if (_.isArray(v)) return rec(v, p, mk, cb);
-                    if (_.isObject(v)) return rec(v, p, mk, cb);
-                    return cb();
+                    if (_.isArray(v)) return rec(v, p, mk, cb)
+                    if (_.isObject(v)) return rec(v, p, mk, cb)
+                    return cb()
                   }
                   if (_.isObject(v)) {
-                    expand(v, () => { _.set(obj, pj, v); cb(); });
-                    return;
+                    expand(v, () => {
+                      _.set(obj, pj, v)
+                      cb()
+                    })
+                    return
                   }
-                  _.set(obj, pj, v);
-                  return cb();
+                  _.set(obj, pj, v)
+                  return cb()
                 } else if (met === 0) {
                   if (l === 1) {
-                    _.unset(obj, pj);
-                    return cb();
+                    _.unset(obj, pj)
+                    return cb()
                   }
-                  if (_.isFunction(v)) return callFunc(v, args(), p => { v = p; return checkRet(); });
-                  _.set(obj, pj, v);
-                  if (_.isArray(v)) return rec(v, p, mk, cb);
-                  if (_.isObject(v)) return rec(v, p, mk, cb);
-                  return cb();
+                  if (_.isFunction(v)) {
+                    return callFunc(v, args(), p => {
+                      v = p
+                      return checkRet()
+                    })
+                  }
+                  _.set(obj, pj, v)
+                  if (_.isArray(v)) return rec(v, p, mk, cb)
+                  if (_.isObject(v)) return rec(v, p, mk, cb)
+                  return cb()
                 } else if (_.isNull(met)) {
-                  if (_.isFunction(v)) return callFunc(v, args(), p => { v = p; return checkRet(); });
-                  _.set(obj, pj, v);
-                  if (_.isArray(v)) return rec(v, p, mk, cb);
-                  if (_.isObject(v)) return rec(v, p, mk, cb);
-                  return cb();
+                  if (_.isFunction(v)) {
+                    return callFunc(v, args(), p => {
+                      v = p
+                      return checkRet()
+                    })
+                  }
+                  _.set(obj, pj, v)
+                  if (_.isArray(v)) return rec(v, p, mk, cb)
+                  if (_.isObject(v)) return rec(v, p, mk, cb)
+                  return cb()
                 }
               }
-              checkRet();
-            };
+              checkRet()
+            }
           }), () => cb()
-        );
-      };
+        )
+      }
 
-      obj = nq.$_ === 1 ? {} : _.cloneDeep(r);
-      rec(r, [], nq.$_, () => cb(obj));
-    };
+      obj = nq.$_ === 1 ? {} : _.cloneDeep(r)
+      rec(r, [], nq.$_, () => cb(obj))
+    }
 
     if (_.isArray(obj)) {
       async.parallel(
         _.map(obj, (v, k, a) => {
           return cb => {
-            pick(v, p => { a[k] = p; cb(); });
-          };
+            pick(v, p => {
+              a[k] = p
+              cb()
+            })
+          }
         }), () => cb(_.filter(obj, x => !_.isEmpty(x)))
-      );
+      )
     } else {
-      pick(obj, cb);
+      pick(obj, cb)
     }
   },
 
-  bodyParser(opt?: {
-    encoding?: string;
-  }) {
+  bodyParser (opt?: {
+    encoding?: string
+  }): (req, res, next) => void {
     return (req, res, next) => {
-      if (!req) return next();
-      if (req.headers['content-type'] !== 'application/nepq') return next();
+      if (!req) return next()
+      if (req.headers['content-type'] !== 'application/nepq') return next()
 
-      if (!opt) opt = {};
-      if (!opt.encoding) opt.encoding = 'utf8';
+      if (!opt) opt = {}
+      if (!opt.encoding) opt.encoding = 'utf8'
 
-      let data = [];
+      let data = []
       req.on('data', d => {
-        data.push(d);
+        data.push(d)
       }).on('end', () => {
-        req.body = this.parse(Buffer.concat(data).toString(opt.encoding));
-        next();
-      });
-    };
+        req.body = this.parse(Buffer.concat(data).toString(opt.encoding))
+        next()
+      })
+    }
   }
-};
+}

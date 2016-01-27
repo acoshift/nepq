@@ -7,10 +7,10 @@ delete user(user: "user1") {
 }
   `,
   obj: {
-    method: "delete",
-    name: "user",
+    method: 'delete',
+    name: 'user',
     params: [{
-      user: "user1"
+      user: 'user1'
     }],
     retrieves: {
       id: 1,
@@ -19,4 +19,4 @@ delete user(user: "user1") {
     },
     $_: 1
   }
-};
+}

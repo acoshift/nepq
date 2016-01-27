@@ -1,12 +1,12 @@
 module.exports = {
   nepq: `delete db.user(user: "user1") { }`,
   obj: {
-    method: "delete",
-    name: "db.user",
+    method: 'delete',
+    name: 'db.user',
     params: [{
-      user: "user1"
+      user: 'user1'
     }],
     retrieves: 0,
     $_: 1
   }
-};
+}

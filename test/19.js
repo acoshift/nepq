@@ -1,10 +1,10 @@
 module.exports = {
   nepq: `read stock.product`,
   obj: {
-    method: "read",
-    name: "stock.product",
+    method: 'read',
+    name: 'stock.product',
     params: [],
     retrieves: 1,
     $_: 1
   }
-};
+}

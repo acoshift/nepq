@@ -1,10 +1,10 @@
 module.exports = {
   nepq: ``,
   obj: {
-    method: "",
-    name: "",
+    method: '',
+    name: '',
     params: [],
     retrieves: 1,
     $_: 1
   }
-};
+}
