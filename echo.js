@@ -1,3 +1,4 @@
+'use strict'
 const nepq = require('./build/index')
 const readline = require('readline')
 
