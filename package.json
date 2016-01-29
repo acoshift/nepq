@@ -30,10 +30,10 @@
     "gulp-jison": "^1.2.0",
     "gulp-mocha": "^2.2.0",
     "gulp-typescript": "^2.10.0",
-    "jison": "^0.4.16",
-    "mocha": "^2.4.2",
+    "jison": "^0.4.17",
+    "mocha": "^2.4.5",
     "tslint-eslint-rules": "^1.0.1",
-    "typescript": "^1.7.5"
+    "typescript": "^1.8.0"
   },
   "dependencies": {
     "async": "^1.5.2",
