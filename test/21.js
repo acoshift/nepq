@@ -1,10 +1,11 @@
 module.exports = {
-  nepq: `query test.db.users(a: 10e+1){_id,name,role,enabled}`,
+  nepq: `query test.db.users(a: 10e+1, b: 0.5e5){_id,name,role,enabled}`,
   obj: {
     method: 'query',
     name: 'test.db.users',
     params: [{
-      a: 10e+1
+      a: 10e+1,
+      b: 0.5e5
     }],
     retrieves: {
       _id: 1,
