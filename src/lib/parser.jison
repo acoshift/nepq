@@ -18,7 +18,7 @@
 \}                                      return '}';
 \[                                      return '[';
 \]                                      return ']';
-(?=\d*)[eE][+-]?(?=\d+)                 return 'e';
+^[eE][+-]?(?=\d+\b)                     return 'e';
 true                                    return 'true';
 false                                   return 'false';
 null                                    return 'null';

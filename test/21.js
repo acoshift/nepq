@@ -1,5 +1,5 @@
 module.exports = {
-  nepq: `query test.db.users(a: 10e+1, b: 0.5e5){_id,name,role,enabled}`,
+  nepq: `query test.db.users(a: 10e+1, b: 0.5e5){_id,name,role,e1nabled}`,
   obj: {
     method: 'query',
     name: 'test.db.users',
@@ -11,7 +11,7 @@ module.exports = {
       _id: 1,
       name: 1,
       role: 1,
-      enabled: 1
+      e1nabled: 1
     },
     $_: 1
   }
