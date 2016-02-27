@@ -11,9 +11,15 @@ fs.readdirSync(path.join(__dirname, 'test'))
   .forEach(function (x) {
     let t = require('./test/' + x)
     let n = nepq.parse(t.nepq)
+    let f = nepq.fastParse(t.nepq)
     let o = t.obj
     it('parser: ' + x, function (cb) {
       assert.deepEqual(n, o)
+      cb()
+    })
+
+    it('fast parser: ' + x, function (cb) {
+      assert.deepEqual(f, o)
       cb()
     })
 

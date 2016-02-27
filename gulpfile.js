@@ -4,6 +4,7 @@ const jison = require('gulp-jison')
 const mocha = require('gulp-mocha')
 const ts = require('gulp-typescript')
 const del = require('del')
+const babel = require('gulp-babel')
 
 const paths = {
   src: './src/',
@@ -36,6 +37,12 @@ gulp.task('jison', function () {
     .pipe(gulp.dest(paths.build))
 })
 
+gulp.task('js', function () {
+  return gulp.src(paths.src + '**/*.js')
+    .pipe(babel({ presets: ['es2015'], comments: false }))
+    .pipe(gulp.dest(paths.build))
+})
+
 gulp.task('ts', function () {
   return gulp.src(paths.src + '**/*.ts')
     .pipe(ts(tsProject))
@@ -64,6 +71,6 @@ gulp.task('echo', ['build'], function () {
 
 gulp.task('clean', ['clean-dist', 'clean-build'])
 
-gulp.task('build', ['jison', 'ts', 'd.ts'])
+gulp.task('build', ['jison', 'js', 'ts', 'd.ts'])
 
 gulp.task('default', ['build'])

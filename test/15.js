@@ -1,5 +1,5 @@
 module.exports = {
-  nepq: `read stock.product(10, "p0", { "$w": 1 }) { price }`,
+  nepq: `read stock.product(10, "p0", { "$w": 1 }, 20, { w: [5] }) { price }`,
   obj: {
     method: 'read',
     name: 'stock.product',
@@ -8,6 +8,10 @@ module.exports = {
       'p0',
       {
         $w: 1
+      },
+      20,
+      {
+        w: [5]
       }
     ],
     retrieves: {
