@@ -18,19 +18,13 @@ function test (example, n) {
   caseNq(example, n)
   var end = Date.now()
   var ts = end - start
-  console.log(Math.floor(n / ts * 1000) + ' case/sec (nepq)')
+  console.log(Math.floor(n / ts * 1000) + ' ops/sec, ' + (ts / n).toFixed(4) + ' ms/op (nepq)')
 
   start = Date.now()
-  caseNqFastParse(example, n)
-  end = Date.now()
-  ts = end - start
-  console.log(Math.floor(n / ts * 1000) + ' case/sec (nepq fastParse)')
-
-  /*start = Date.now()
   caseJson(JSON.stringify(nepq.parse(example)), n)
   end = Date.now()
   ts = end - start
-  console.log(Math.floor(n / ts * 1000) + ' case/sec (json)')*/
+  console.log(Math.floor(n / ts * 1000) + ' ops/sec, ' + (ts / n).toFixed(4) + ' ms/op (json)')
 }
 
 function caseJson (example, n) {
@@ -42,11 +36,5 @@ function caseJson (example, n) {
 function caseNq (example, n) {
   for (var i = 0; i < n; ++i) {
     nepq.parse(example)
-  }
-}
-
-function caseNqFastParse (example, n) {
-  for (var i = 0; i < n; ++i) {
-    nepq.fastParse(example)
   }
 }

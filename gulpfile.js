@@ -2,7 +2,6 @@
 const gulp = require('gulp')
 const jison = require('gulp-jison')
 const mocha = require('gulp-mocha')
-const ts = require('gulp-typescript')
 const del = require('del')
 const babel = require('gulp-babel')
 
@@ -12,16 +11,6 @@ const paths = {
   test: './test/',
   dist: './dist/'
 }
-
-const tsProject = ts.createProject({
-  target: 'es5',
-  module: 'commonjs',
-  removeComments: true,
-  moduleResolution: 'node',
-  noImplicitAny: false,
-  noResolve: true,
-  isolatedModules: true
-})
 
 gulp.task('clean-build', function () {
   return del([paths.build])
@@ -40,12 +29,6 @@ gulp.task('jison', function () {
 gulp.task('js', function () {
   return gulp.src(paths.src + '**/*.js')
     .pipe(babel({ presets: ['es2015'], comments: false }))
-    .pipe(gulp.dest(paths.build))
-})
-
-gulp.task('ts', function () {
-  return gulp.src(paths.src + '**/*.ts')
-    .pipe(ts(tsProject))
     .pipe(gulp.dest(paths.build))
 })
 
@@ -71,6 +54,6 @@ gulp.task('echo', ['build'], function () {
 
 gulp.task('clean', ['clean-dist', 'clean-build'])
 
-gulp.task('build', ['jison', 'js', 'ts', 'd.ts'])
+gulp.task('build', ['jison', 'js', 'd.ts'])
 
 gulp.task('default', ['build'])
